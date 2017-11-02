@@ -75,6 +75,8 @@ public class WSCProblem {
 			int[][] m_generation = new int[WSCInitializer.dimension_size][WSCInitializer.dimension_size];
 			for (int m = 0; m < WSCInitializer.dimension_size; m++) {
 				for (int n = 0; n < WSCInitializer.dimension_size; n++) {
+					// do I need to clone ??????????????????????
+					//???????????????
 					m_generation[m][n] = population.get(m).serQueue.get(n);
 				}
 			}
