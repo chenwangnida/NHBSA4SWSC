@@ -3,7 +3,7 @@ package wsc.problem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WSCIndividual {
+public class WSCIndividual implements Comparable<WSCIndividual> {
 
 	private String strRepresentation; // a string of graph-based representation
 	private double availability;
@@ -14,7 +14,12 @@ public class WSCIndividual {
 	private double semanticDistance;
 
 	public double fitness = 0.0; // The higher, the fitterSSSS
-	public List<Integer> items = new ArrayList<Integer>(); // service Index arraylist
+	public List<Integer> serQueue = new ArrayList<Integer>(); // service Index arraylist
+
+	@Override
+	public int compareTo(WSCIndividual o) {
+		return Double.compare(o.fitness, this.fitness);
+	}
 
 	public String getStrRepresentation() {
 		return strRepresentation;

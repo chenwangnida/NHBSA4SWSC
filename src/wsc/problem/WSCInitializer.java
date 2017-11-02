@@ -37,7 +37,8 @@ import wsc.owl.bean.OWLClass;
 public class WSCInitializer {
 	// NHSBSA settings
 	public static Random random;
-	public static int pop_size;
+	public static int population_size;
+	public static int dimension_size;
 	public static final int MAX_NUM_ITERATIONS = 100;
 
 	// local search settings
@@ -97,7 +98,7 @@ public class WSCInitializer {
 	 */
 	public WSCInitializer(String lName, String taskFileName, String serviceFileName, String taxonomyFileName,
 			long seed) {
-		
+
 		initialisationStartTime = System.currentTimeMillis();
 		logName = lName;
 		random = new Random(seed);
@@ -116,6 +117,9 @@ public class WSCInitializer {
 			semanticMatrix = HashBasedTable.create();
 			// Filter web services in repository
 			initialWSCPool.allRelevantService(taskInput, taskOutput);
+
+			dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
+			population_size = dimension_size * 2;
 			// System.out.println("All relevant service: " +
 			// initialWSCPool.getServiceSequence().size()
 			// + ";semanticMatrix: " + semanticMatrix.size());
