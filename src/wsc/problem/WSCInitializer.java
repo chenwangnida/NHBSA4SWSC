@@ -109,32 +109,33 @@ public class WSCInitializer {
 
 			// register web services associated related ontology
 			initialWSCPool = new InitialWSCPool(serviceFileName, taxonomyFileName);
-			// System.out.println("All service: " +
-			// initialWSCPool.getSwsPool().getServiceList().size());
+
 			// construct ontology tree structure
 			ontologyDAG = createOntologyDAG(initialWSCPool);
-			// construct matrix storing all semantic quality for query
-			semanticMatrix = HashBasedTable.create();
+
 			// Filter web services in repository
 			initialWSCPool.allRelevantService(taskInput, taskOutput);
-
-			dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
-			population_size = dimension_size * 2;
-			// System.out.println("All relevant service: " +
-			// initialWSCPool.getServiceSequence().size()
-			// + ";semanticMatrix: " + semanticMatrix.size());
 
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
 
+		dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
+		population_size = dimension_size * 2;
+
+		// construct matrix storing all semantic quality for query
+		semanticMatrix = HashBasedTable.create();
 		createSemanticMatrix();
 
 		MapServiceToQoS(initialWSCPool.getServiceSequence());
-		// mapServicesToIndex(initialWSCPool.getServiceSequence(),
-		// serviceToIndexMap);
+
 		calculateNormalisationBounds(initialWSCPool.getServiceSequence(),
 				initialWSCPool.getSemanticsPool().getOwlInstHashMap().size());
+
+		System.out.println(
+				"All service: " + initialWSCPool.getSwsPool().getServiceList().size() + "; all relevant service: "
+						+ initialWSCPool.getServiceSequence().size() + "; semanticMatrix: " + semanticMatrix.size());
+
 	}
 
 	/**

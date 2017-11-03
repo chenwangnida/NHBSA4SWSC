@@ -54,7 +54,7 @@ public class WSCProblem {
 			// add a local search
 			// need to be done later
 
-			// the fitness
+			// sort the individuals according to the fitness
 			Collections.sort(population);
 
 			// update best individual so far
@@ -75,8 +75,6 @@ public class WSCProblem {
 			int[][] m_generation = new int[WSCInitializer.dimension_size][WSCInitializer.dimension_size];
 			for (int m = 0; m < WSCInitializer.dimension_size; m++) {
 				for (int n = 0; n < WSCInitializer.dimension_size; n++) {
-					// do I need to clone ??????????????????????
-					//???????????????
 					m_generation[m][n] = population.get(m).serQueue.get(n);
 				}
 			}
@@ -95,19 +93,16 @@ public class WSCProblem {
 				WSCIndividual indi_updated = new WSCIndividual();
 
 				for (int n = 0; n < id_updated.length; n++) {
-					try {
+					// do I need to clone ??????????????????????
+					// ???????????????
+					indi_updated.serQueue.add(id_updated[n]);
 
-						indi_updated.serQueue.add(id_updated[n]);
-
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
 				}
-				//generate updated_graph from updatedIndividual
-				//?? need to be completed
-				
+				// generate $updated_graph$ from updatedIndividual
+				// ?? need to be completed
+
 				// evaluate updated updated_graph
-				eval.aggregationAttribute(indi_updated, updated_graph);
+				// eval.aggregationAttribute(indi_updated, updated_graph);
 				eval.calculateFitness(indi_updated);
 				population.add(indi_updated);
 			}

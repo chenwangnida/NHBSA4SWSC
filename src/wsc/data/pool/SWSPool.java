@@ -158,7 +158,7 @@ public class SWSPool {
 			}
 		}
 		if (foundServiceIndex == -1) {
-			System.out.println("no matching for inputSet");
+//			System.out.println("no matching for inputSet");
 			return null;
 		}
 		Service service = this.serviceList.get(foundServiceIndex);
