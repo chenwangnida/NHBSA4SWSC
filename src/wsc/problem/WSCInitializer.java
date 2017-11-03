@@ -25,7 +25,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Table;
 
 import wsc.InitialWSCPool;
@@ -80,6 +82,8 @@ public class WSCInitializer {
 	public static final String rootconcept = "TOPNODE";
 	public static Map<String, double[]> serviceQoSMap = new HashMap<String, double[]>();
 	public static Map<String, Service> serviceMap = new HashMap<String, Service>();
+	public static BiMap<Integer, String> serviceIndexBiMap = HashBiMap.create();
+
 	public static Table<String, String, Double> semanticMatrix;
 
 	// logs settings
@@ -325,10 +329,12 @@ public class WSCInitializer {
 	}
 
 	private void MapServiceToQoS(List<Service> serviceList) {
+		int i = 0;
 		for (Service service : serviceList) {
 			service.getInputList().forEach(input -> input.setServiceId(service.getServiceID()));
 			service.getOutputList().forEach(output -> output.setServiceId(service.getServiceID()));
 			serviceMap.put(service.getServiceID(), service);
+			serviceIndexBiMap.put(i++, service.getServiceID());
 			serviceQoSMap.put(service.getServiceID(), service.getQos());
 		}
 

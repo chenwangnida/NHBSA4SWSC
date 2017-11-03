@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,7 +25,8 @@ public class SWSPool {
 
 	private List<Service> serviceList = new LinkedList<Service>();
 	private SemanticsPool semantics;
-
+	
+	
 //	private final Map<String, Service> graphOutputSetMap = new HashMap<String, Service>();
 
 
@@ -205,6 +208,8 @@ public class SWSPool {
 				graphOutputListMap.put(output.getOutput(), service);
 //			}
 		}
+		
+		
 		return service;
 	}
 

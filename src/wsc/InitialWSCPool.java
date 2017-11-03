@@ -31,6 +31,9 @@ public class InitialWSCPool {
 	private final HashSet<String> outputSet = new HashSet<String>();
 	private final SemanticsPool semanticsPool;
 	private final List<Service> serviceSequence = new LinkedList<Service>();
+	
+	//a vector based representation
+	public static Set<Service>  usedSerQueue = new HashSet<Service>();
 
 	private static List<Service> serviceCandidates = new ArrayList<Service>();
 	private static List<ServiceOutput> graphOutputs = new ArrayList<ServiceOutput>();
@@ -308,6 +311,7 @@ public class InitialWSCPool {
 //		graphOutputList.clear();
 		graphOutputListMap.clear();
 		serviceCandidates.clear();
+		usedSerQueue.clear();
 
 //		graphOutputList.addAll(taskInput);
 		taskInput.forEach(input->graphOutputs.add(new ServiceOutput(input,"startNode",false)));
@@ -326,6 +330,9 @@ public class InitialWSCPool {
 				System.err.println("No service is usable now");
 				return;
 			}
+			//add found service to a vector based representation
+			usedSerQueue.add(service);
+			
 			goalSatisfied = this.checkOutputSet(directedGraph, taskOutput);
 
 		} while (!goalSatisfied);

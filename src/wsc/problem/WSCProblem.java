@@ -12,6 +12,8 @@ import java.util.Set;
 import org.jgrapht.DirectedGraph;
 
 import nhbsa.NHBSA;
+import wsc.InitialWSCPool;
+import wsc.data.pool.Service;
 import wsc.graph.GraphUtils;
 import wsc.graph.ServiceEdge;
 import wsc.graph.ServiceGraph;
@@ -40,8 +42,20 @@ public class WSCProblem {
 		while (population.size() < WSCInitializer.population_size) {
 			WSCIndividual individual = new WSCIndividual();
 
-			// we need to modify the codes to generate an array of queue
+			// graph-based representation
 			ServiceGraph graph = generateGraph(init);
+
+			// filter the dangling compared the final graph from the vector-based
+			// representation ??
+			removingDangle4UsedQueue(graph, InitialWSCPool.usedSerQueue);
+
+			// vector-based representation
+			InitialWSCPool.usedSerQueue.forEach(
+					usedSer -> individual.serQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(usedSer)));
+
+			// add unused from the vector-based representation ??
+			fullRepresentation();
+
 			eval.aggregationAttribute(individual, graph);
 			eval.calculateFitness(individual);
 			population.add(individual);
@@ -115,6 +129,19 @@ public class WSCProblem {
 		}
 		writeLogs();
 
+	}
+
+	// remove the serviceId
+	private Set<String> removingDangle4UsedQueue(ServiceGraph graph, Set<Service> usedSerQueue) {
+		Set<String> usedSerIdQueue = new HashSet<String>();
+		
+		Set<String> vertices = graph.vertexSet();
+		for (Service s : usedSerQueue) {
+			if (!(vertices.contains(s.serviceID))) {
+				usedSerQueue.remove(s.serviceID);
+			}
+		}
+		return usedSerQueue;
 	}
 
 	/**
