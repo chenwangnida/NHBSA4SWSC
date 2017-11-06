@@ -60,6 +60,14 @@ public class InitialWSCPool {
 		return serviceSequence;
 	}
 
+	public static List<Service> getServiceCandidates() {
+		return serviceCandidates;
+	}
+
+	public static void setServiceCandidates(List<Service> serviceCandidates) {
+		InitialWSCPool.serviceCandidates = serviceCandidates;
+	}
+
 	/**
 	 * using service file and owl file to create semantics pool and service pool
 	 *
@@ -338,6 +346,39 @@ public class InitialWSCPool {
 		} while (!goalSatisfied);
 
 	}
+	
+	
+	public void createGraphServiceBySerQueue(List<String> taskInput, List<String> taskOutput,
+			DirectedGraph<String, ServiceEdge> directedGraph) {
+		graphOutputs.clear();
+		graphOutputListMap.clear();
+//		serviceCandidates.clear();
+
+		taskInput.forEach(input->graphOutputs.add(new ServiceOutput(input,"startNode",false)));
+
+//		serviceCandidates.addAll(serviceSequence);
+//		Collections.shuffle(serviceCandidates, WSCInitializer.random);
+
+		boolean goalSatisfied;
+
+		directedGraph.addVertex("startNode");
+
+		do {
+			Service service = swsPool.createGraphService(graphOutputs, serviceCandidates, this.semanticsPool,
+					directedGraph, graphOutputListMap);
+			if (service == null) {
+				System.err.println("No service is usable now");
+				return;
+			}
+			//add found service to a vector based representation
+//			usedSerQueue.add(service);
+			
+			goalSatisfied = this.checkOutputSet(directedGraph, taskOutput);
+
+		} while (!goalSatisfied);
+
+	}
+
 
 	public void createGraphService4Mutation(List<String> combinedInputs, List<String> combinedOutputs,
 			DirectedGraph<String, ServiceEdge> directedGraph) {

@@ -108,18 +108,22 @@ public class WSCProblem {
 			for (int m = 0; m < pop_updated.size(); m++) {
 				int[] id_updated = pop_updated.get(m);
 				WSCIndividual indi_updated = new WSCIndividual();
-
+				List<Service> serviceCandidates = new ArrayList<Service>();
 				for (int n = 0; n < id_updated.length; n++) {
-					// do I need to clone ??????????????????????
-					// ???????????????
-					indi_updated.serQueue.add(id_updated[n]);
 
+					// use add functiona is proper
+					indi_updated.serQueue.add(id_updated[n]);
+					serviceCandidates.add(WSCInitializer.Index2ServiceMap.get(id_updated[n]));
 				}
-				// generate $updated_graph$ from updatedIndividual
-				// ?? need to be completed
+				// set the service candidates according to the sampling
+				InitialWSCPool.getServiceCandidates().clear();
+				InitialWSCPool.setServiceCandidates(serviceCandidates);
+				ServiceGraph update_graph = generateGraphBySerQueue(init);
+				// set up the vector-based representation ??? solution ?
 
 				// evaluate updated updated_graph
 				// eval.aggregationAttribute(indi_updated, updated_graph);
+				eval.aggregationAttribute(indi_updated, update_graph);
 				eval.calculateFitness(indi_updated);
 				population.add(indi_updated);
 			}
@@ -140,7 +144,7 @@ public class WSCProblem {
 				sourceVertice);
 		while (iterator.hasNext()) {
 			String serviceId = iterator.next();
-			if( (!serviceId.equals("startNode"))&&(!serviceId.equals("endNode"))) {
+			if ((!serviceId.equals("startNode")) && (!serviceId.equals("endNode"))) {
 				usedSerQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(serviceId));
 			}
 		}
@@ -194,6 +198,28 @@ public class WSCProblem {
 		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
 
 		WSCInitializer.initialWSCPool.createGraphService(WSCInitializer.taskInput, WSCInitializer.taskOutput, graph);
+
+		while (true) {
+			List<String> dangleVerticeList = dangleVerticeList(graph);
+			if (dangleVerticeList.size() == 0) {
+				break;
+			}
+			removeCurrentdangle(graph, dangleVerticeList);
+		}
+		graph.removeEdge("startNode", "endNode");
+		// System.out.println("original DAG:"+graph.toString());
+		optimiseGraph(graph);
+		// System.out.println("optimised DAG:"+graph.toString());
+
+		return graph;
+	}
+
+	public ServiceGraph generateGraphBySerQueue(WSCInitializer init) {
+
+		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
+
+		WSCInitializer.initialWSCPool.createGraphServiceBySerQueue(WSCInitializer.taskInput, WSCInitializer.taskOutput,
+				graph);
 
 		while (true) {
 			List<String> dangleVerticeList = dangleVerticeList(graph);

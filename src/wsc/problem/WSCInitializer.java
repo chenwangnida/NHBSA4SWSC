@@ -82,6 +82,7 @@ public class WSCInitializer {
 	public static final String rootconcept = "TOPNODE";
 	public static Map<String, double[]> serviceQoSMap = new HashMap<String, double[]>();
 	public static Map<String, Service> serviceMap = new HashMap<String, Service>();
+	public static Map<Integer, Service> Index2ServiceMap = new HashMap<Integer, Service>();
 	public static BiMap<Integer, String> serviceIndexBiMap = HashBiMap.create();
 
 	public static Table<String, String, Double> semanticMatrix;
@@ -338,6 +339,7 @@ public class WSCInitializer {
 			serviceMap.put(service.getServiceID(), service);
 			serviceQoSMap.put(service.getServiceID(), service.getQos());
 			serviceIndexBiMap.put(i, service.getServiceID());
+			Index2ServiceMap.put(i, service);
 		}
 
 	}

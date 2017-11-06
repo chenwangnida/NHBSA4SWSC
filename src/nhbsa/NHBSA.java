@@ -50,7 +50,7 @@ public class NHBSA {
 				m_node[i][j] += delta_sum;
 			}
 		}
-		// printNHM(m_node);
+//		 printNHM(m_node);
 
 		// NHBSA/WO Sampling sampleSize numbers of individuals
 		for (int no_sample = 0; no_sample < sampleSize; no_sample++) {
