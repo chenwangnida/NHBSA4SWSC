@@ -111,8 +111,9 @@ public class WSCProblem {
 				List<Service> serviceCandidates = new ArrayList<Service>();
 				for (int n = 0; n < id_updated.length; n++) {
 
-					// use add functiona is proper
+					// use add function is proper
 					indi_updated.serQueue.add(id_updated[n]);
+					// deep clone may be not needed if no changes are applied to the pointed
 					serviceCandidates.add(WSCInitializer.Index2ServiceMap.get(id_updated[n]));
 				}
 				// set the service candidates according to the sampling

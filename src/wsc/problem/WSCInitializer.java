@@ -332,7 +332,6 @@ public class WSCInitializer {
 	private void MapServiceToQoS(List<Service> serviceList) {
 		int i = 0;
 		for (Service service : serviceList) {
-			i += 1;
 			service.serviceIndex = i;
 			service.getInputList().forEach(input -> input.setServiceId(service.getServiceID()));
 			service.getOutputList().forEach(output -> output.setServiceId(service.getServiceID()));
@@ -340,6 +339,7 @@ public class WSCInitializer {
 			serviceQoSMap.put(service.getServiceID(), service.getQos());
 			serviceIndexBiMap.put(i, service.getServiceID());
 			Index2ServiceMap.put(i, service);
+			i += 1;
 		}
 
 	}
