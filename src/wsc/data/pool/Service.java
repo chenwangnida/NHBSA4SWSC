@@ -21,6 +21,7 @@ import wsc.problem.WSCInitializer;
 
 public class Service implements Comparable<Service> {
 
+	public int serviceIndex;
 	public final String serviceID;
 	// list of inputInstances(individuals), rather than list of input parameter.
 	public double[] qos;

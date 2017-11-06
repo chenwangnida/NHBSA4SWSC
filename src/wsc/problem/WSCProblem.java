@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
 
 import nhbsa.NHBSA;
 import wsc.InitialWSCPool;
@@ -41,26 +44,26 @@ public class WSCProblem {
 		// random initalize one population solutions
 		while (population.size() < WSCInitializer.population_size) {
 			WSCIndividual individual = new WSCIndividual();
+			List<Integer> usedSerQueue = new ArrayList();
 
 			// graph-based representation
 			ServiceGraph graph = generateGraph(init);
 
-			// filter the dangling compared the final graph from the vector-based
-			// representation ??
-			removingDangle4UsedQueue(graph, InitialWSCPool.usedSerQueue);
+			// filter the dangling compared the final graph from usedSerQueue
+			List<Integer> usedQueue = usedQueueofLayers("startNode", graph, usedSerQueue);
 
-			// vector-based representation
-			InitialWSCPool.usedSerQueue.forEach(
-					usedSer -> individual.serQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(usedSer)));
+			// add unused queue to form a complete a vector-based individual
+			List<Integer> serQueue = completeSerQueueIndi(usedQueue);
 
-			// add unused from the vector-based representation ??
-			fullRepresentation();
+			// Set serQueue to individual(do I need deep clone ?)
+			individual.serQueue.addAll(serQueue);
 
 			eval.aggregationAttribute(individual, graph);
 			eval.calculateFitness(individual);
 			population.add(individual);
 		}
 
+		// entry to learn the matrix and sampling individuals
 		int iteration = 0;
 		while (iteration < WSCInitializer.MAX_NUM_ITERATIONS) {
 			long startTime = System.currentTimeMillis();
@@ -131,18 +134,54 @@ public class WSCProblem {
 
 	}
 
-	// remove the serviceId
-	private Set<String> removingDangle4UsedQueue(ServiceGraph graph, Set<Service> usedSerQueue) {
-		Set<String> usedSerIdQueue = new HashSet<String>();
-		
-		Set<String> vertices = graph.vertexSet();
-		for (Service s : usedSerQueue) {
-			if (!(vertices.contains(s.serviceID))) {
-				usedSerQueue.remove(s.serviceID);
+	private List<Integer> usedQueueofLayers(String sourceVertice, ServiceGraph graph, List<Integer> usedSerQueue) {
+
+		GraphIterator<String, ServiceEdge> iterator = new BreadthFirstIterator<String, ServiceEdge>(graph,
+				sourceVertice);
+		while (iterator.hasNext()) {
+			String serviceId = iterator.next();
+			if( (!serviceId.equals("startNode"))&&(!serviceId.equals("endNode"))) {
+				usedSerQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(serviceId));
 			}
 		}
+
 		return usedSerQueue;
 	}
+
+	private List<Integer> completeSerQueueIndi(List<Integer> usedQueue) {
+		for (Service ser : WSCInitializer.initialWSCPool.getServiceSequence()) {
+			if (!usedQueue.contains(ser.serviceIndex)) {
+				usedQueue.add(ser.serviceIndex);
+			}
+		}
+		if (usedQueue.size() != WSCInitializer.initialWSCPool.getServiceSequence().size()) {
+
+			System.err.println("the size of individual is not correcct");
+			return null;
+		}
+
+		return usedQueue;
+	}
+
+	// // remove the serviceId
+	// private Set<Integer> removingDangle4UsedQueue(ServiceGraph graph,
+	// Set<Service> usedSerQueue) {
+	// Set<Integer> usedSerIdQueue = new HashSet<Integer>();
+	// Set<String> vertices = graph.vertexSet();
+	//
+	// for (Iterator<Service> iterator = usedSerQueue.iterator();
+	// iterator.hasNext();) {
+	// Service s = iterator.next();
+	// if (!(vertices.contains(s.serviceID))) {
+	// // Remove the current element from the iterator and the list.
+	// iterator.remove();
+	// }
+	// }
+	//
+	// // transfer service set into integer set
+	// usedSerQueue.forEach(ser -> usedSerIdQueue.add(ser.serviceIndex));
+	// return usedSerIdQueue;
+	// }
 
 	/**
 	 * generate graph that remove all dangle nodes
