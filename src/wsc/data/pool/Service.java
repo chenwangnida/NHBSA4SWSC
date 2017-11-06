@@ -83,6 +83,7 @@ public class Service implements Comparable<Service> {
 		this.serviceID = serviceID;
 	}
 
+
 	@Override
 	public int compareTo(Service o) {
 		if (score > o.score)
@@ -485,5 +486,6 @@ public class Service implements Comparable<Service> {
 		return depth;
 
 	}
+	
 
 }

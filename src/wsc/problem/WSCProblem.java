@@ -49,7 +49,7 @@ public class WSCProblem {
 			// graph-based representation
 			ServiceGraph graph = generateGraph(init);
 
-			// filter the dangling compared the final graph from usedSerQueue
+			// create a queue of services according to breathfirstsearch
 			List<Integer> usedQueue = usedQueueofLayers("startNode", graph, usedSerQueue);
 
 			// add unused queue to form a complete a vector-based individual
@@ -111,17 +111,27 @@ public class WSCProblem {
 				List<Service> serviceCandidates = new ArrayList<Service>();
 				for (int n = 0; n < id_updated.length; n++) {
 
-					// use add function is proper
-					indi_updated.serQueue.add(id_updated[n]);
-					// deep clone may be not needed if no changes are applied to the pointed
+					// deep clone may be not needed if no changes are applied to the pointed service
 					serviceCandidates.add(WSCInitializer.Index2ServiceMap.get(id_updated[n]));
 				}
+				
 				// set the service candidates according to the sampling
 				InitialWSCPool.getServiceCandidates().clear();
 				InitialWSCPool.setServiceCandidates(serviceCandidates);
 				ServiceGraph update_graph = generateGraphBySerQueue(init);
-				// set up the vector-based representation ??? solution ?
+				// adjust the bias according to the valid solution from the service queue
+				
+				List<Integer> usedSerQueue = new ArrayList();
+				// create a queue of services according to breathfirstsearch
+				List<Integer> usedQueue = usedQueueofLayers("startNode", update_graph, usedSerQueue);
 
+				// add unused queue to form a complete a vector-based individual
+				List<Integer> serQueue = completeSerQueueIndi(usedQueue);
+				
+				//set the serQueue to the updatedIndividual
+				indi_updated.serQueue = serQueue;
+				
+				
 				// evaluate updated updated_graph
 				// eval.aggregationAttribute(indi_updated, updated_graph);
 				eval.aggregationAttribute(indi_updated, update_graph);
