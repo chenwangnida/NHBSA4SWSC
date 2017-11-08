@@ -14,7 +14,10 @@ public class WSCIndividual implements Comparable<WSCIndividual> {
 	private double semanticDistance;
 
 	public double fitness = 0.0; // The higher, the fitterSSSS
+	
+	private int splitPosition;
 	public List<Integer> serQueue = new ArrayList<Integer>(); // service Index arraylist
+	
 
 	@Override
 	public int compareTo(WSCIndividual o) {
@@ -83,6 +86,14 @@ public class WSCIndividual implements Comparable<WSCIndividual> {
 
 	public void setFitness(double fitness) {
 		this.fitness = fitness;
+	}
+
+	public int getSplitPosition() {
+		return splitPosition;
+	}
+
+	public void setSplitPosition(int splitPosition) {
+		this.splitPosition = splitPosition;
 	}
 
 }

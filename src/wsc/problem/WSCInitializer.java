@@ -44,6 +44,7 @@ public class WSCInitializer {
 	public static final int MAX_NUM_ITERATIONS = 100;
 
 	// local search settings
+	public static int noOfls = 0;
 	public static double Pls = 0.1; // probability of local search
 
 	// Constants with of order of QoS attributes
