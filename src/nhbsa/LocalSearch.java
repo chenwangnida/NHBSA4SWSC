@@ -15,13 +15,13 @@ import wsc.problem.WSCInitializer;
 public class LocalSearch {
 
 	// stochastic local search
-	public List<WSCIndividual> swap(List<WSCIndividual> individualList, Random random, WSCGraph graGenerator,
+	public List<WSCIndividual> swap(List<WSCIndividual> population, Random random, WSCGraph graGenerator,
 			WSCEvaluation eval) {
 
 		// swap
 
 		int split = 0;
-		for (WSCIndividual indi : individualList) {
+		for (WSCIndividual indi : population) {
 
 			double rSLS = random.nextDouble();
 
@@ -31,7 +31,7 @@ public class LocalSearch {
 				split = indi.getSplitPosition();
 
 				WSCIndividual indi_temp = new WSCIndividual();
-				List<Integer> serQueue_temp = new ArrayList<Integer>(); // service Index arraylist
+				List<Integer> serQueue_temp = new ArrayList<Integer>(); // service Index arrayList
 
 				// deep clone the services into a service queue for indi_temp
 				for (Integer ser : indi.serQueue) {
@@ -72,8 +72,8 @@ public class LocalSearch {
 				ServiceGraph update_graph = graGenerator.generateGraphBySerQueue();
 				// adjust the bias according to the valid solution from the service queue
 
-				List<Integer> usedSerQueue = new ArrayList();
-				// create a queue of services according to breathfirstsearch algorithm
+				List<Integer> usedSerQueue = new ArrayList<Integer>();
+				// create a queue of services according to BreathFirstSearch algorithm
 
 				List<Integer> usedQueue = graGenerator.usedQueueofLayers("startNode", update_graph, usedSerQueue);
 				// set up the split index for the updated individual
@@ -92,7 +92,7 @@ public class LocalSearch {
 
 				// replace it current individual if a better solution found by swap method
 				if (indi_temp.fitness > indi.fitness) {
-					individualList.set(individualList.indexOf(indi), indi_temp);
+					population.set(population.indexOf(indi), indi_temp);
 					WSCInitializer.noOfls++;
 					System.out.println("No. of effective local search :" + WSCInitializer.noOfls + 1);
 				}
@@ -100,7 +100,7 @@ public class LocalSearch {
 
 		}
 
-		return individualList;
+		return population;
 	}
 
 }
