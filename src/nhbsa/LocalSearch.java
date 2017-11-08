@@ -93,6 +93,7 @@ public class LocalSearch {
 				// replace it current individual if a better solution found by swap method
 				if (indi_temp.fitness > indi.fitness) {
 					individualList.set(individualList.indexOf(indi), indi_temp);
+					WSCInitializer.noOfls++;
 					System.out.println("No. of effective local search :" + WSCInitializer.noOfls + 1);
 				}
 			}

@@ -70,7 +70,7 @@ public class WSCProblem {
 		int iteration = 0;
 		while (iteration < WSCInitializer.MAX_NUM_ITERATIONS) {
 			long startTime = System.currentTimeMillis();
-			System.out.println("ITERATION " + iteration);
+			System.out.println("GENERATION " + iteration);
 
 			// add a local search
 			LocalSearch ls = new LocalSearch();
