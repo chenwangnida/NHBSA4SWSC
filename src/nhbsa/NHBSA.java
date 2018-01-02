@@ -20,7 +20,7 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = false; // true for considering the learning rate, false for no
+	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	boolean isAdaptive = true;// false for default, no adaptive changes according to the entropy of the matrix
 	double lrate = 0.5; // probability of learning rate
@@ -227,8 +227,8 @@ public class NHBSA {
 
 		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
-				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * (1 - lrate_update)
-						+ m_node[indi_pos][index] * lrate_update;
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * lrate_update
+						+ m_node[indi_pos][index] * (1 - lrate_update);
 			}
 		}
 
@@ -245,7 +245,7 @@ public class NHBSA {
 		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
 				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * lrate
-						+ m_node[indi_pos][index] * (1-lrate);
+						+ m_node[indi_pos][index] * (1 - lrate);
 			}
 		}
 
@@ -255,10 +255,10 @@ public class NHBSA {
 
 	// adaptively calculate the discount rate according to the value of entropy
 	private double updateLRate(double meanEntropy, double lrate) {
-//		return lrate * (1 - 1 / (1 + Math.exp(meanEntropy * k)));
-//		return  (1 - 1 / (1 + Math.exp(meanEntropy * k)));
-		return  1 / (1 + Math.exp(meanEntropy * k));
-
+		// return lrate * (1 - 1 / (1 + Math.exp(meanEntropy * k)));
+		// return (1 - 1 / (1 + Math.exp(meanEntropy * k)));
+		 return 1 /Math.exp(meanEntropy);
+//		return (-meanEntropy * 1 / 3) + 1;// linear function
 
 	}
 
