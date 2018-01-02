@@ -41,7 +41,7 @@ public class WSCInitializer {
 	public static Random random;
 	public static int population_size;
 	public static int dimension_size;
-	public static final int MAX_NUM_ITERATIONS = 100;
+	public static final int MAX_NUM_ITERATIONS = 30;
 
 	// local search settings
 	public static int noOfls = 0;

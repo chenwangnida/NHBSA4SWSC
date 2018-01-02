@@ -5,6 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/math"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Guava"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JGraphT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JFreeChart"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
