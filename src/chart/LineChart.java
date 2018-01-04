@@ -42,13 +42,4 @@ public class LineChart {
 			e.printStackTrace();
 		}
 	}
-
-	// normalize the fitness for the testing
-	private double normaliseFitness(double fitnessValue) {
-		if (1200 - 900 == 0.0)
-			return 1.0;
-		else
-			return (fitnessValue - 900) / (1200 - 900);
-	}
-
 }

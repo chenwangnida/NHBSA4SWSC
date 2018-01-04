@@ -257,8 +257,8 @@ public class NHBSA {
 	private double updateLRate(double meanEntropy, double lrate) {
 		// return lrate * (1 - 1 / (1 + Math.exp(meanEntropy * k)));
 		// return (1 - 1 / (1 + Math.exp(meanEntropy * k)));
-		 return 1 /Math.exp(meanEntropy);
-//		return (-meanEntropy * 1 / 3) + 1;// linear function
+//		 return 1 /Math.exp(meanEntropy);
+		return (-meanEntropy * 1 / 3) + 1;// linear function
 
 	}
 

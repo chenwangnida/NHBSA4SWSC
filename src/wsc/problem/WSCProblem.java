@@ -34,6 +34,12 @@ public class WSCProblem {
 
 	// The main entry to NHBSASolver.
 	public void NHBSASolver(WSCGraph graGenerator, WSCEvaluation eval) {
+
+		WSCInitializer.startTime = System.currentTimeMillis();
+		WSCInitializer.initTime.add(System.currentTimeMillis()-WSCInitializer.initialisationStartTime);
+		WSCInitializer.initialization = (long) 0;
+
+
 		List<WSCIndividual> population = new ArrayList<WSCIndividual>();
 		// entry to NHBSA
 		NHBSA nhbsa = new NHBSA(WSCInitializer.dimension_size, WSCInitializer.dimension_size);
@@ -59,13 +65,15 @@ public class WSCProblem {
 			eval.aggregationAttribute(individual, graph);
 			eval.calculateFitness(individual);
 			population.add(individual);
+
+			BestIndiSoFar4EvalStep(population);
+
 		}
 
 		// entry to learn the matrix and sampling individuals
 		int iteration = 0;
 		while (iteration < WSCInitializer.MAX_NUM_ITERATIONS) {
-			long startTime = System.currentTimeMillis();
-			System.out.println("GENERATION " + iteration);
+			System.out.println("NHM " + iteration);
 
 			// add a local search
 			// LocalSearch ls = new LocalSearch();
@@ -75,15 +83,17 @@ public class WSCProblem {
 			Collections.sort(population);
 
 			// update best individual so far
-			if (iteration == 0) {
-				WSCInitializer.bestFitnessSoFar.add(population.get(0));
-			} else {
-				if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness < population.get(0).fitness) {
-					WSCInitializer.bestFitnessSoFar.add(population.get(0));
-				} else {
-					WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration - 1));
-				}
-			}
+			// if (iteration == 0) {
+			// WSCInitializer.bestFitnessSoFar.add(population.get(0));
+			// } else {
+			// if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness <
+			// population.get(0).fitness) {
+			// WSCInitializer.bestFitnessSoFar.add(population.get(0));
+			// } else {
+			// WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration
+			// - 1));
+			// }
+			// }
 
 			// entry to NHBSA
 
@@ -140,27 +150,58 @@ public class WSCProblem {
 				eval.aggregationAttribute(indi_updated, update_graph);
 				eval.calculateFitness(indi_updated);
 				population.add(indi_updated);
-			}
 
-			WSCInitializer.initTime.add(WSCInitializer.initialization);
-			WSCInitializer.time.add(System.currentTimeMillis() - startTime);
-			WSCInitializer.initialization = (long) 0;
+				BestIndiSoFar4EvalStep(population);
+
+			}
 
 			iteration += 1;
 		}
-		writeLogs(nhbsa);
+		// writeLogs(nhbsa);
 
+	}
+
+	// check the bestIndi found every evalStep
+	private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
+		WSCInitializer.evalCounter++;
+		if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
+			System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter/200);
+			WSCInitializer.time.add(System.currentTimeMillis() - WSCInitializer.startTime);
+			WSCInitializer.initTime.add(WSCInitializer.initialization);
+			WSCInitializer.startTime = System.currentTimeMillis();
+
+			// sort the individuals according to the fitness
+			Collections.sort(population);
+
+			if (WSCInitializer.evalCounter == WSCInitializer.evalStep) {
+				WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
+			} else {
+				if (WSCInitializer.bestFitnessSoFar4EvalTimes.get(
+						WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).fitness < population.get(0).fitness) {
+					WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
+				} else {
+					WSCInitializer.bestFitnessSoFar4EvalTimes.add(WSCInitializer.bestFitnessSoFar4EvalTimes
+							.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1));
+				}
+			}
+
+			if (WSCInitializer.evalCounter == WSCInitializer.evalMax) {
+				writeLogs();
+				System.exit(0);
+			}
+
+		}
 	}
 
 	public void writeLogs() {
 		try {
 			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
-			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
+			for (int i = 0; i < WSCInitializer.bestFitnessSoFar4EvalTimes.size(); i++) {
 				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
-						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
+						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar4EvalTimes.get(i).fitness));
 			}
-			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
-					.getStrRepresentation());
+			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
+					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
 			writer.append("\n");
 			writer.close();
 
@@ -172,12 +213,12 @@ public class WSCProblem {
 	public void writeLogs(NHBSA nhbsa) {
 		try {
 			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
-			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
+			for (int i = 0; i < WSCInitializer.bestFitnessSoFar4EvalTimes.size(); i++) {
 				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
-						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
+						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar4EvalTimes.get(i).fitness));
 			}
-			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
-					.getStrRepresentation());
+			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
+					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
 			writer.append("\n");
 
 			// print out the entropy for obeservation
@@ -185,7 +226,7 @@ public class WSCProblem {
 				writer.append(String.format("%d %s\n", i, nhbsa.getEntropy4Gen().get(i)));
 			}
 
-			LineChart  lc = new LineChart();
+			LineChart lc = new LineChart();
 			lc.createLineChart(nhbsa.getEntropy4Gen(), nhbsa.getDiscountRate4Gen());
 
 			writer.close();
@@ -194,6 +235,5 @@ public class WSCProblem {
 			e.printStackTrace();
 		}
 	}
-
 
 }
