@@ -28,6 +28,7 @@ public class NHBSA {
 	double[][] m_node_archive;
 
 	// a array for storing entropy
+	private static double maxEntropy = 0;
 	private double[] entropyTemp;
 	private List<String> entropy4Gen;
 	private List<Double> discountRate4Gen;
@@ -190,6 +191,11 @@ public class NHBSA {
 
 			entropyTemp[p_counter] = entropy(discreteProbabilities);
 
+			if (p_counter == 0) {
+				maxEntropy = entropyTemp[0];
+				System.out.println("Max Entropy:"+maxEntropy);
+			}
+
 			p_counter++;
 		}
 
@@ -257,8 +263,8 @@ public class NHBSA {
 	private double updateLRate(double meanEntropy, double lrate) {
 		// return lrate * (1 - 1 / (1 + Math.exp(meanEntropy * k)));
 		// return (1 - 1 / (1 + Math.exp(meanEntropy * k)));
-//		 return 1 /Math.exp(meanEntropy);
-		return (-meanEntropy * 1 / 3) + 1;// linear function
+		// return 1 /Math.exp(meanEntropy);
+		return 1 - meanEntropy * 1 / maxEntropy;// linear function
 
 	}
 
