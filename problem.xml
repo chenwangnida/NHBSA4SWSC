@@ -6,7 +6,8 @@
     </provided>
     <wanted>
       <instance name="maxprice"/>
-      <instance name="book"/>
+      <instance name="book-type"/>
+      <instance name="recommendedpriceindollar"/>
     </wanted>
   </task>
   <solutions />
