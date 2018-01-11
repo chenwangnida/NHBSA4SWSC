@@ -1,0 +1,16 @@
+0 4438 2980 0.779809
+1 0 1663 0.784187
+2 0 2333 0.793749
+3 0 1997 0.793749
+4 0 2170 0.793749
+5 0 1898 0.793749
+6 0 2073 0.793749
+7 0 239 0.805527
+8 0 1853 0.805527
+9 0 1882 0.805527
+10 0 1860 0.805527
+11 0 1863 0.805527
+12 0 1825 0.805527
+13 0 1883 0.805527
+14 0 218 0.805527
+digraph g {startNode->academicbooknumbersearch; academicbooknumbersearch->tizonbook_recommendedpriceindollar_service; academicbooknumbersearch->book_authorbook-type_service; book_authorbook-type_service->author_publicationmaxprice_service; book_authorbook-type_service->endNode; author_publicationmaxprice_service->endNode; tizonbook_recommendedpriceindollar_service->endNode; }

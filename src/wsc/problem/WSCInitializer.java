@@ -41,11 +41,11 @@ public class WSCInitializer {
 	public static Random random;
 	public static int population_size;
 	public static int dimension_size;
-	public static final int MAX_NUM_ITERATIONS = 30;
+	public static final int MAX_NUM_ITERATIONS = 1000000;
 
 	// local search settings
 	public static int noOfls = 0;
-	public static double Pls = 0.1; // probability of local search
+	public static double Pls = 0.01; // probability of local search
 
 	// Constants with of order of QoS attributes
 	public static final int TIME = 0;

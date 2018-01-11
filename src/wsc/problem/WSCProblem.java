@@ -76,24 +76,24 @@ public class WSCProblem {
 			System.out.println("NHM " + iteration);
 
 			// add a local search
-			// LocalSearch ls = new LocalSearch();
-			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
+//			 LocalSearch ls = new LocalSearch();
+//			 ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
 
 			// update best individual so far
-			// if (iteration == 0) {
-			// WSCInitializer.bestFitnessSoFar.add(population.get(0));
-			// } else {
-			// if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness <
-			// population.get(0).fitness) {
-			// WSCInitializer.bestFitnessSoFar.add(population.get(0));
-			// } else {
-			// WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration
-			// - 1));
-			// }
-			// }
+			 if (iteration == 0) {
+			 WSCInitializer.bestFitnessSoFar.add(population.get(0));
+			 } else {
+			 if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness <
+			 population.get(0).fitness) {
+			 WSCInitializer.bestFitnessSoFar.add(population.get(0));
+			 } else {
+			 WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration
+			 - 1));
+			 }
+			 }
 
 			// entry to NHBSA
 
@@ -203,6 +203,17 @@ public class WSCProblem {
 			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
 					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
 			writer.append("\n");
+			
+			// print out the entropy for obeservation
+						for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
+							writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
+						}
+
+						LineChart lc = new LineChart();
+						lc.createLineChart(NHBSA.entropy4Gen, NHBSA.discountRate4Gen);
+
+			
+			
 			writer.close();
 
 		} catch (IOException e) {

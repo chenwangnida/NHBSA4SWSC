@@ -1,5 +1,6 @@
 package nhbsa;
 
+//plz config isDiscount, is Adaptive, and lrate
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,15 +24,15 @@ public class NHBSA {
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	boolean isAdaptive = true;// false for default, no adaptive changes according to the entropy of the matrix
-	double lrate = 0.5; // probability of learning rate
-	double k = 1;
+	double lrate = 0; // probability of learning rate
+	double k = 2.5;
 	double[][] m_node_archive;
 
 	// a array for storing entropy
 	private static double maxEntropy = 0;
 	private double[] entropyTemp;
-	private List<String> entropy4Gen;
-	private List<Double> discountRate4Gen;
+	public static List<String> entropy4Gen;
+	public static List<Double> discountRate4Gen;
 
 	public NHBSA(int m_N, int m_L) {
 		m_node = new double[m_N][m_L]; // initial a node histogram matrix (NHM)
@@ -193,7 +194,7 @@ public class NHBSA {
 
 			if (p_counter == 0) {
 				maxEntropy = entropyTemp[0];
-				System.out.println("Max Entropy:"+maxEntropy);
+				System.out.println("Max Entropy:" + maxEntropy);
 			}
 
 			p_counter++;
@@ -264,8 +265,9 @@ public class NHBSA {
 		// return lrate * (1 - 1 / (1 + Math.exp(meanEntropy * k)));
 		// return (1 - 1 / (1 + Math.exp(meanEntropy * k)));
 		// return 1 /Math.exp(meanEntropy);
-		return 1 - meanEntropy * 1 / maxEntropy;// linear function
-
+		return 1 - meanEntropy * 1 / (k * maxEntropy);// linear function
+		// return (1 - meanEntropy * 1 / maxEntropy) * (1 - meanEntropy * 1 /
+		// maxEntropy);// linear function
 	}
 
 	// sampling function for sampling one individual requiring
