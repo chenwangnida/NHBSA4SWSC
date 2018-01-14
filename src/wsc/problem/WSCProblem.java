@@ -36,9 +36,8 @@ public class WSCProblem {
 	public void NHBSASolver(WSCGraph graGenerator, WSCEvaluation eval) {
 
 		WSCInitializer.startTime = System.currentTimeMillis();
-		WSCInitializer.initTime.add(System.currentTimeMillis()-WSCInitializer.initialisationStartTime);
+		WSCInitializer.initTime.add(System.currentTimeMillis() - WSCInitializer.initialisationStartTime);
 		WSCInitializer.initialization = (long) 0;
-
 
 		List<WSCIndividual> population = new ArrayList<WSCIndividual>();
 		// entry to NHBSA
@@ -76,24 +75,22 @@ public class WSCProblem {
 			System.out.println("NHM " + iteration);
 
 			// add a local search
-//			 LocalSearch ls = new LocalSearch();
-//			 ls.swap(population, WSCInitializer.random, graGenerator, eval);
+			// LocalSearch ls = new LocalSearch();
+			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
 
-			// update best individual so far
-			 if (iteration == 0) {
-			 WSCInitializer.bestFitnessSoFar.add(population.get(0));
-			 } else {
-			 if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness <
-			 population.get(0).fitness) {
-			 WSCInitializer.bestFitnessSoFar.add(population.get(0));
-			 } else {
-			 WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration
-			 - 1));
-			 }
-			 }
+//			// update best individual so far
+//			if (iteration == 0) {
+//				WSCInitializer.bestFitnessSoFar.add(population.get(0));
+//			} else {
+//				if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness < population.get(0).fitness) {
+//					WSCInitializer.bestFitnessSoFar.add(population.get(0));
+//				} else {
+//					WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration - 1));
+//				}
+//			}
 
 			// entry to NHBSA
 
@@ -165,7 +162,7 @@ public class WSCProblem {
 	private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
 		WSCInitializer.evalCounter++;
 		if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
-			System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter/200);
+			System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter / 200);
 			WSCInitializer.time.add(System.currentTimeMillis() - WSCInitializer.startTime);
 			WSCInitializer.initTime.add(WSCInitializer.initialization);
 			WSCInitializer.startTime = System.currentTimeMillis();
@@ -203,17 +200,15 @@ public class WSCProblem {
 			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
 					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
 			writer.append("\n");
-			
+
 			// print out the entropy for obeservation
-						for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
-							writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
-						}
+			for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
+				writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
+			}
+//
+//			LineChart lc = new LineChart();
+//			lc.createLineChart(NHBSA.entropy4Gen, NHBSA.discountRate4Gen);
 
-						LineChart lc = new LineChart();
-						lc.createLineChart(NHBSA.entropy4Gen, NHBSA.discountRate4Gen);
-
-			
-			
 			writer.close();
 
 		} catch (IOException e) {

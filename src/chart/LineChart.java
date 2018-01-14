@@ -23,10 +23,10 @@ public class LineChart {
 			line_chart_dataset.addValue(Double.parseDouble(s[1]), "Max entropy", i + "");
 			line_chart_dataset.addValue(Double.parseDouble(s[2]), "min entropy", i + "");
 			line_chart_dataset.addValue(discountRate4Gen.get(i), "adaptive discount rate", i + "");
-			line_chart_dataset.addValue((WSCInitializer.bestFitnessSoFar.get(i).fitness) * 2, "fitness*2", i + "");
+//			line_chart_dataset.addValue((WSCInitializer.bestFitnessSoFar.get(i).fitness) * 2, "fitness*2", i + "");
 		}
 
-		JFreeChart lineChartObject = ChartFactory.createLineChart("Changes in Entropy, Fitness and Discount rate",
+		JFreeChart lineChartObject = ChartFactory.createLineChart("Changes in Entropy and Discount rate",
 				"Generation", "Value", line_chart_dataset, PlotOrientation.VERTICAL, true, true, false);
 
 		int width = 640; /* Width of the image */

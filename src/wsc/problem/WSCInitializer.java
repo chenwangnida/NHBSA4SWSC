@@ -94,6 +94,7 @@ public class WSCInitializer {
 	//evaluation settings
 	public static int evalMax = 6000;
 	public static int evalStep = 200;
+	public static int evalIteration = 30;
 	public static int evalCounter = 0;
 
 	//time settings
