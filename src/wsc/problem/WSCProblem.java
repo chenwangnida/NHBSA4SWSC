@@ -65,7 +65,6 @@ public class WSCProblem {
 			eval.calculateFitness(individual);
 			population.add(individual);
 			WSCInitializer.evalCounter++;
-			System.out.print("; evalCounter:"+WSCInitializer.evalCounter);;
 			BestIndiSoFar4EvalStep(population);
 		}
 
@@ -97,7 +96,7 @@ public class WSCProblem {
 			nhbsa.setM_L(WSCInitializer.dimension_size);
 			nhbsa.setM_N(WSCInitializer.dimension_size);
 
-			List<int[]> pop_updated = nhbsa.sampling4NHBSA(WSCInitializer.dimension_size, WSCInitializer.random);
+			List<int[]> pop_updated = nhbsa.sampling4NHBSA(WSCInitializer.dimension_size * 2, WSCInitializer.random);
 
 			// update the population
 			population.clear();
@@ -138,7 +137,6 @@ public class WSCProblem {
 				population.add(indi_updated);
 
 				WSCInitializer.evalCounter++;
-				System.out.print("; evalCounter:"+WSCInitializer.evalCounter);;
 				BestIndiSoFar4EvalStep(population);
 
 			}
@@ -153,7 +151,7 @@ public class WSCProblem {
 	private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
 		if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
 			System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter / 200);
-			
+
 			WSCInitializer.time.add(System.currentTimeMillis() - WSCInitializer.startTime);
 			WSCInitializer.initTime.add(WSCInitializer.initialization);
 			WSCInitializer.startTime = System.currentTimeMillis();

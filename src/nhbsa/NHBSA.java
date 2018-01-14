@@ -25,7 +25,7 @@ public class NHBSA {
 	// settings for discount learning
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 2; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
+	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
 	double lrate = 0.5; // default = 0.5
 	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
@@ -211,7 +211,7 @@ public class NHBSA {
 
 			if (p_counter == 0) {
 				maxEntropy = entropyTemp[0];
-				System.out.println("Max Entropy:" + maxEntropy);
+				// System.out.println("Max Entropy:" + maxEntropy);
 			}
 
 			p_counter++;
@@ -266,12 +266,14 @@ public class NHBSA {
 			double[][] m_node_updated) {
 		WSCInitializer.NHMCounter++;
 
-		double updateRate = WSCInitializer.NHMCounter / WSCInitializer.NHMIteration;
+		// long updateRate = WSCInitializer.NHMCounter /
+		// (long)WSCInitializer.NHMIteration;
 
 		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
-				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * (1 - updateRate)
-						+ m_node[indi_pos][index] * updateRate;
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index]
+						* (WSCInitializer.NHMIteration - WSCInitializer.NHMCounter) / WSCInitializer.NHMIteration
+						+ m_node[indi_pos][index] * WSCInitializer.NHMCounter / WSCInitializer.NHMIteration;
 			}
 		}
 

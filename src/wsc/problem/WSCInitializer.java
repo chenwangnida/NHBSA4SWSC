@@ -96,7 +96,7 @@ public class WSCInitializer {
 	public static int evalStep = 200;
 	public static int evalCounter = 0;
 
-	public static int NHMIteration = 30;
+	public static int NHMIteration = 0 ;
 	public static int NHMCounter = 0;
 	
 	public static int testCounter = 0;
@@ -142,6 +142,9 @@ public class WSCInitializer {
 
 		dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
 		population_size = dimension_size * 2;
+		
+		NHMIteration = (int) Math.floor(evalMax/population_size);
+		
 
 		// construct matrix storing all semantic quality for query
 		semanticMatrix = HashBasedTable.create();
