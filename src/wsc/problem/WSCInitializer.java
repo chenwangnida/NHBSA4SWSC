@@ -91,13 +91,17 @@ public class WSCInitializer {
 	// logs settings
 	public static String logName;
 
-	//evaluation settings
+	// evaluation settings
 	public static int evalMax = 6000;
 	public static int evalStep = 200;
-	public static int evalIteration = 30;
 	public static int evalCounter = 0;
 
-	//time settings
+	public static int NHMIteration = 30;
+	public static int NHMCounter = 0;
+	
+	public static int testCounter = 0;
+
+	// time settings
 	public static ArrayList<Long> initTime = new ArrayList<Long>();
 	public static ArrayList<Long> time = new ArrayList<Long>();
 	public static ArrayList<WSCIndividual> bestFitnessSoFar = new ArrayList<WSCIndividual>();
@@ -105,7 +109,6 @@ public class WSCInitializer {
 	public static Long initialisationStartTime;
 	public static Long initialization;
 	public static Long startTime;
-
 
 	/**
 	 * all the data load entry.

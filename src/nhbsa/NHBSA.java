@@ -25,7 +25,7 @@ public class NHBSA {
 	// settings for discount learning
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
+	int method = 2; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
 	double lrate = 0.5; // default = 0.5
 	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
@@ -87,6 +87,7 @@ public class NHBSA {
 				isFirstNHM = false;
 				copy2dArray(m_node_archive, m_node);
 				discountRate4Gen.add(lrate);
+				calculateEntropy(m_node);
 
 			} else {
 				// update m_node using m_node and m_node_archive
@@ -108,7 +109,7 @@ public class NHBSA {
 					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 3, m_node_updated);
 					calculateEntropy(m_node);
 					break;
-				case 5:
+				case 5: // moving average
 					m_node_updated = adaptive_discountedNHM4MovingAverage(m_node_archive, m_node, m_node_updated);
 					break;
 				}
@@ -123,6 +124,9 @@ public class NHBSA {
 			}
 
 		}
+
+		// test
+		System.out.println("===NHM==test size" + WSCInitializer.testCounter++);
 
 		// NHBSA/WO Sampling sampleSize numbers of individuals
 		for (int no_sample = 0; no_sample < sampleSize; no_sample++) {
@@ -260,12 +264,14 @@ public class NHBSA {
 
 	private double[][] adaptive_discountedNHM4MovingAverage(double[][] m_node_archive, double[][] m_node,
 			double[][] m_node_updated) {
+		WSCInitializer.NHMCounter++;
+
+		double updateRate = WSCInitializer.NHMCounter / WSCInitializer.NHMIteration;
 
 		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
-				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index]
-						* (1 - 1 / WSCInitializer.evalIteration)
-						+ m_node[indi_pos][index] * 1 / WSCInitializer.evalIteration;
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * (1 - updateRate)
+						+ m_node[indi_pos][index] * updateRate;
 			}
 		}
 
