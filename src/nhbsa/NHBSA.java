@@ -65,7 +65,7 @@ public class NHBSA {
 		setDefaultPara(); // set bias
 
 		// add bias to all elements of NHM
-		for (i = 0; i < m_N; i++) {
+		for (i = 0; i < m_L; i++) {
 			for (j = 0; j < m_L; j++) {
 				m_node[i][j] = m_bRatio;
 			}
@@ -127,10 +127,10 @@ public class NHBSA {
 			}
 
 		}
-		
+
 		// print NHX Distri
 		printDistribution(m_node, WSCInitializer.NHMCounter);
-		
+
 		WSCInitializer.NHMCounter++;
 
 		// NHBSA/WO Sampling sampleSize numbers of individuals
@@ -276,8 +276,9 @@ public class NHBSA {
 		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
 				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index]
-						* (WSCInitializer.NHMIteration - WSCInitializer.NHMCounter) / WSCInitializer.NHMIteration
-						+ m_node[indi_pos][index] * WSCInitializer.NHMCounter / WSCInitializer.NHMIteration;
+						* (WSCInitializer.MAX_NUM_ITERATIONS - WSCInitializer.NHMCounter)
+						/ WSCInitializer.MAX_NUM_ITERATIONS
+						+ m_node[indi_pos][index] * WSCInitializer.NHMCounter / WSCInitializer.MAX_NUM_ITERATIONS;
 			}
 		}
 
@@ -328,9 +329,9 @@ public class NHBSA {
 
 	private double delta_sum_calcu(int m_N, int i, int j, double[][] m_node) {
 		double delta_sum = 0;
-		for (int k = 1; k <= m_N; k++) {
+		for (int k = 0; k < m_N; k++) {
 
-			if (m_pop[k - 1][i] == j) {
+			if (m_pop[k][i] == j) {
 				delta_sum += 1;
 			} else {
 				delta_sum += 0;

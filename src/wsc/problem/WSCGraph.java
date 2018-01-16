@@ -41,6 +41,27 @@ public class WSCGraph {
 
 		return graph;
 	}
+	
+	public ServiceGraph generateGraph(List<Integer> usedSerQueue) {
+
+		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
+
+		WSCInitializer.initialWSCPool.createGraphService(WSCInitializer.taskInput, WSCInitializer.taskOutput, graph, usedSerQueue);
+
+		while (true) {
+			List<String> dangleVerticeList = dangleVerticeList(graph);
+			if (dangleVerticeList.size() == 0) {
+				break;
+			}
+			removeCurrentdangle(graph, dangleVerticeList);
+		}
+		graph.removeEdge("startNode", "endNode");
+		// System.out.println("original DAG:"+graph.toString());
+		optimiseGraph(graph);
+		// System.out.println("optimised DAG:"+graph.toString());
+
+		return graph;
+	}
 
 	public ServiceGraph generateGraphBySerQueue() {
 
@@ -160,10 +181,10 @@ public class WSCGraph {
 		return usedSerQueue;
 	}
 
-	public List<Integer> completeSerQueueIndi(List<Integer> usedQueue) {
-		for (Service ser : WSCInitializer.initialWSCPool.getServiceSequence()) {
-			if (!usedQueue.contains(ser.serviceIndex)) {
-				usedQueue.add(ser.serviceIndex);
+	public List<Integer> completeSerQueueIndi(List<Integer> usedQueue, List<Integer> fullSerQueue) {
+		for (int serId : fullSerQueue) {
+			if (!usedQueue.contains(serId)) {
+				usedQueue.add(serId);
 			}
 		}
 		if (usedQueue.size() != WSCInitializer.initialWSCPool.getServiceSequence().size()) {

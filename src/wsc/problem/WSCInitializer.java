@@ -39,9 +39,9 @@ import wsc.owl.bean.OWLClass;
 public class WSCInitializer {
 	// NHSBSA settings
 	public static Random random;
-	public static int population_size;
+	public static final int population_size = 100;
 	public static int dimension_size;
-	public static final int MAX_NUM_ITERATIONS = 1000000;
+	public static final int MAX_NUM_ITERATIONS = 30;
 
 	// local search settings
 	public static int noOfls = 0;
@@ -94,11 +94,11 @@ public class WSCInitializer {
 	public static String logName;
 
 	// evaluation settings
-	public static int evalMax = 6000;
-	public static int evalStep = 200;
-	public static int evalCounter = 0;
-
-	public static int NHMIteration = 0;
+	// public static int evalMax = 6000;
+	// public static int evalStep = 200;
+	// public static int evalCounter = 0;
+	//
+	// public static int NHMIteration = 0;
 	public static int NHMCounter = 0;
 
 	// time settings
@@ -141,9 +141,9 @@ public class WSCInitializer {
 		}
 
 		dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
-		population_size = dimension_size * 2;
+//		population_size = dimension_size * 2;
 
-		NHMIteration = (int) Math.floor(evalMax / population_size);
+		// NHMIteration = (int) Math.floor(evalMax / population_size);
 
 		// construct matrix storing all semantic quality for query
 		semanticMatrix = HashBasedTable.create();

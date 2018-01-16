@@ -41,15 +41,16 @@ public class WSCProblem {
 
 		List<WSCIndividual> population = new ArrayList<WSCIndividual>();
 		// entry to NHBSA
-		NHBSA nhbsa = new NHBSA(WSCInitializer.dimension_size, WSCInitializer.dimension_size);
+		NHBSA nhbsa = new NHBSA(WSCInitializer.population_size, WSCInitializer.dimension_size);
 
-		// random initalize one population solutions
-		while (population.size() < WSCInitializer.population_size) {
+		// random initalize one double size population solutions
+		while (population.size() < WSCInitializer.population_size * 2) {
 			WSCIndividual individual = new WSCIndividual();
+			List<Integer> fullSerQueue = new ArrayList<Integer>();
 			List<Integer> usedSerQueue = new ArrayList<Integer>();
 
 			// graph-based representation
-			ServiceGraph graph = graGenerator.generateGraph();
+			ServiceGraph graph = graGenerator.generateGraph(fullSerQueue);
 
 			// create a queue of services according to breath first search
 			List<Integer> usedQueue = graGenerator.usedQueueofLayers("startNode", graph, usedSerQueue);
@@ -57,15 +58,15 @@ public class WSCProblem {
 			individual.setSplitPosition(usedQueue.size()); // index from 0 to (splitposition-1)
 
 			// add unused queue to form a complete a vector-based individual
-			List<Integer> serQueue = graGenerator.completeSerQueueIndi(usedQueue);
+			List<Integer> serQueue = graGenerator.completeSerQueueIndi(usedQueue, fullSerQueue);
 			// Set serQueue to individual(do I need deep clone ?)
 			individual.serQueue.addAll(serQueue);
 
 			eval.aggregationAttribute(individual, graph);
 			eval.calculateFitness(individual);
 			population.add(individual);
-			WSCInitializer.evalCounter++;
-			BestIndiSoFar4EvalStep(population);
+			// WSCInitializer.evalCounter++;
+			// BestIndiSoFar4EvalStep(population);
 		}
 
 		// entry to learn the matrix and sampling individuals
@@ -74,8 +75,8 @@ public class WSCProblem {
 			System.out.println("NHM " + iteration);
 
 			// add a local search
-//			 LocalSearch ls = new LocalSearch();
-//			 ls.swap(population, WSCInitializer.random, graGenerator, eval);
+			// LocalSearch ls = new LocalSearch();
+			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
@@ -85,8 +86,8 @@ public class WSCProblem {
 			// NHBSA nhbsa = new NHBSA(WSCInitializer.dimension_size,
 			// WSCInitializer.dimension_size);
 			// select first half population into matrix
-			int[][] m_generation = new int[WSCInitializer.dimension_size][WSCInitializer.dimension_size];
-			for (int m = 0; m < WSCInitializer.dimension_size; m++) {
+			int[][] m_generation = new int[WSCInitializer.population_size][WSCInitializer.dimension_size];
+			for (int m = 0; m < WSCInitializer.population_size; m++) {
 				for (int n = 0; n < WSCInitializer.dimension_size; n++) {
 					m_generation[m][n] = population.get(m).serQueue.get(n);
 				}
@@ -94,9 +95,9 @@ public class WSCProblem {
 
 			nhbsa.setM_pop(m_generation);
 			nhbsa.setM_L(WSCInitializer.dimension_size);
-			nhbsa.setM_N(WSCInitializer.dimension_size);
+			nhbsa.setM_N(WSCInitializer.population_size);
 
-			List<int[]> pop_updated = nhbsa.sampling4NHBSA(WSCInitializer.dimension_size * 2, WSCInitializer.random);
+			List<int[]> pop_updated = nhbsa.sampling4NHBSA(WSCInitializer.population_size * 2, WSCInitializer.random);
 
 			// update the population
 			population.clear();
@@ -114,10 +115,13 @@ public class WSCProblem {
 				// set the service candidates according to the sampling
 				InitialWSCPool.getServiceCandidates().clear();
 				InitialWSCPool.setServiceCandidates(serviceCandidates);
-				ServiceGraph update_graph = graGenerator.generateGraphBySerQueue();
+
+				List<Integer> fullSerQueue = new ArrayList<Integer>();
+				List<Integer> usedSerQueue = new ArrayList();
+
+				ServiceGraph update_graph = graGenerator.generateGraph(fullSerQueue);
 				// adjust the bias according to the valid solution from the service queue
 
-				List<Integer> usedSerQueue = new ArrayList();
 				// create a queue of services according to breathfirstsearch algorithm
 
 				List<Integer> usedQueue = graGenerator.usedQueueofLayers("startNode", update_graph, usedSerQueue);
@@ -125,7 +129,7 @@ public class WSCProblem {
 				indi_updated.setSplitPosition(usedQueue.size());
 
 				// add unused queue to form a complete a vector-based individual
-				List<Integer> serQueue = graGenerator.completeSerQueueIndi(usedQueue);
+				List<Integer> serQueue = graGenerator.completeSerQueueIndi(usedQueue, fullSerQueue);
 
 				// set the serQueue to the updatedIndividual
 				indi_updated.serQueue = serQueue;
@@ -136,8 +140,8 @@ public class WSCProblem {
 				eval.calculateFitness(indi_updated);
 				population.add(indi_updated);
 
-				WSCInitializer.evalCounter++;
-				BestIndiSoFar4EvalStep(population);
+				// WSCInitializer.evalCounter++;
+				// BestIndiSoFar4EvalStep(population);
 
 			}
 
@@ -148,36 +152,38 @@ public class WSCProblem {
 	}
 
 	// check the bestIndi found every evalStep
-	private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
-		if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
-			System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter / 200);
-
-			WSCInitializer.time.add(System.currentTimeMillis() - WSCInitializer.startTime);
-			WSCInitializer.initTime.add(WSCInitializer.initialization);
-			WSCInitializer.startTime = System.currentTimeMillis();
-
-			// sort the individuals according to the fitness
-			Collections.sort(population);
-
-			if (WSCInitializer.evalCounter == WSCInitializer.evalStep) {
-				WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
-			} else {
-				if (WSCInitializer.bestFitnessSoFar4EvalTimes.get(
-						WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).fitness < population.get(0).fitness) {
-					WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
-				} else {
-					WSCInitializer.bestFitnessSoFar4EvalTimes.add(WSCInitializer.bestFitnessSoFar4EvalTimes
-							.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1));
-				}
-			}
-
-			if (WSCInitializer.evalCounter == WSCInitializer.evalMax) {
-				writeLogs();
-				System.exit(0);
-			}
-
-		}
-	}
+	// private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
+	// if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
+	// System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter / 200);
+	//
+	// WSCInitializer.time.add(System.currentTimeMillis() -
+	// WSCInitializer.startTime);
+	// WSCInitializer.initTime.add(WSCInitializer.initialization);
+	// WSCInitializer.startTime = System.currentTimeMillis();
+	//
+	// // sort the individuals according to the fitness
+	// Collections.sort(population);
+	//
+	// if (WSCInitializer.evalCounter == WSCInitializer.evalStep) {
+	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
+	// } else {
+	// if (WSCInitializer.bestFitnessSoFar4EvalTimes.get(
+	// WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).fitness <
+	// population.get(0).fitness) {
+	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
+	// } else {
+	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(WSCInitializer.bestFitnessSoFar4EvalTimes
+	// .get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1));
+	// }
+	// }
+	//
+	// if (WSCInitializer.evalCounter == WSCInitializer.evalMax) {
+	// writeLogs();
+	// System.exit(0);
+	// }
+	//
+	// }
+	// }
 
 	public void writeLogs() {
 		try {
