@@ -136,7 +136,6 @@ public class SemanticsPool {
 		ParamterConn pConn = new ParamterConn();
 		pConn.setConsidered(false);
 
-		
 		String a = givenClass.getID();
 		String b = relatedClass.getID();
 		if (WSCInitializer.semanticMatrix.get(a, b) != null) {
@@ -144,10 +143,10 @@ public class SemanticsPool {
 			pConn.setConsidered(true);
 			return pConn;
 		}
-		
+
 		return pConn;
 	}
-	
+
 	public ParamterConn searchSemanticMatchFromInst4SubsumeMatch(String givenInst, String existInst) {
 
 		OWLClass givenClass = this.owlClassHashMap
@@ -159,7 +158,6 @@ public class SemanticsPool {
 		ParamterConn pConn = new ParamterConn();
 		pConn.setConsidered(false);
 
-		
 		String a = givenClass.getID();
 		String b = relatedClass.getID();
 		if (WSCInitializer.semanticMatrix.get(b, a) != null) {
@@ -167,12 +165,11 @@ public class SemanticsPool {
 			pConn.setConsidered(true);
 			return pConn;
 		}
-		
+
 		return pConn;
-		
+
 	}
-	
-	
+
 	public ParamterConn searchSemanticMatchTypeFromInst(String givenInst, String existInst) {
 
 		OWLClass givenClass = this.owlClassHashMap
@@ -192,10 +189,10 @@ public class SemanticsPool {
 			pConn.setConsidered(true);
 
 			if (a.equals(b)) {
-				pConn.setMatchType(1);
+				pConn.setMatchType(WSCInitializer.exact);
 				pConn.setSimilarity(s);
 			} else {
-				pConn.setMatchType(0.5);
+				pConn.setMatchType(WSCInitializer.plugin);
 				pConn.setSimilarity(s);
 
 			}

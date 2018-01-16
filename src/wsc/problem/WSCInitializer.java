@@ -60,6 +60,8 @@ public class WSCInitializer {
 	public static final double W4 = 0.125;
 	public static final double W5 = 0.125;
 	public static final double W6 = 0.125;
+	public static final double exact = 1.00;
+	public static final double plugin = 0.75;
 
 	public static double MINIMUM_COST = Double.MAX_VALUE;
 	public static double MINIMUM_TIME = Double.MAX_VALUE;
@@ -96,9 +98,9 @@ public class WSCInitializer {
 	public static int evalStep = 200;
 	public static int evalCounter = 0;
 
-	public static int NHMIteration = 0 ;
+	public static int NHMIteration = 0;
 	public static int NHMCounter = 0;
-	
+
 	// time settings
 	public static ArrayList<Long> initTime = new ArrayList<Long>();
 	public static ArrayList<Long> time = new ArrayList<Long>();
@@ -140,9 +142,8 @@ public class WSCInitializer {
 
 		dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
 		population_size = dimension_size * 2;
-		
-		NHMIteration = (int) Math.floor(evalMax/population_size);
-		
+
+		NHMIteration = (int) Math.floor(evalMax / population_size);
 
 		// construct matrix storing all semantic quality for query
 		semanticMatrix = HashBasedTable.create();
