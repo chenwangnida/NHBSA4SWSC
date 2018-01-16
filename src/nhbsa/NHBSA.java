@@ -1,6 +1,9 @@
 package nhbsa;
 
-//plz config isDiscount, is Adaptive, and lrate
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +26,7 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = true; // true for considering the learning rate, false for no
+	boolean isDiscount = false; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
@@ -50,7 +53,7 @@ public class NHBSA {
 	}
 
 	public final void setDefaultPara() {
-		m_bRatio = 0.0002;// defined by users
+		m_bRatio = 0.2;// defined by users
 		m_bRatio = (m_N * m_bRatio) / m_L; // bias
 	}
 
@@ -124,9 +127,11 @@ public class NHBSA {
 			}
 
 		}
-
-		// test
-		System.out.println("===NHM==test size" + WSCInitializer.testCounter++);
+		
+		// print NHX Distri
+		printDistribution(m_node, WSCInitializer.NHMCounter);
+		
+		WSCInitializer.NHMCounter++;
 
 		// NHBSA/WO Sampling sampleSize numbers of individuals
 		for (int no_sample = 0; no_sample < sampleSize; no_sample++) {
@@ -153,26 +158,26 @@ public class NHBSA {
 			while (p_counter < m_L) { // postion_counter for the random
 										// permutation
 
-				int position_rand = position_permutation.get(p_counter);
+				int position_dimension = position_permutation.get(p_counter);
 				// initial numsToGenerate from the candidate node list
 				double[] discreteProbabilities = new double[m_L - p_counter];
 
 				// calculate probability and put them into proba[]
 				double sum_proba = 0;
 				for (int c : c_candidates) {
-					sum_proba += m_node[position_rand][c];
+					sum_proba += m_node[position_dimension][c];
 				}
 				int m = 0;
 
 				for (int c : c_candidates) {
-					discreteProbabilities[m] = m_node[position_rand][c] / sum_proba;
+					discreteProbabilities[m] = m_node[position_dimension][c] / sum_proba;
 					m++;
 				}
 
 				// sample x of individual for c[r[p]]
 				int[] node_x = sampling(c_candidates, discreteProbabilities, random);
 
-				sampledIndi[position_rand] = node_x[0];
+				sampledIndi[position_dimension] = node_x[0];
 
 				// remove x from numsToGenerate
 				c_candidates = ArrayUtils.removeElement(c_candidates, node_x[0]);
@@ -264,7 +269,6 @@ public class NHBSA {
 
 	private double[][] adaptive_discountedNHM4MovingAverage(double[][] m_node_archive, double[][] m_node,
 			double[][] m_node_updated) {
-		WSCInitializer.NHMCounter++;
 
 		// long updateRate = WSCInitializer.NHMCounter /
 		// (long)WSCInitializer.NHMIteration;
@@ -380,6 +384,34 @@ public class NHBSA {
 
 	}
 
+	public void printDistribution(double[][] m_node, int NHMCounter) {
+
+		if (NHMCounter < 4) {
+
+			String[][] discreteProbabilities = new String[m_N][m_L];
+
+			for (int position_dimension = 0; position_dimension < m_N; position_dimension++) {
+				// initial numsToGenerate from the candidate node list
+				// calculate probability and put them into proba[]
+				double sum_proba = 0;
+				for (int candidate = 0; candidate < m_L; candidate++) {
+					sum_proba += m_node[position_dimension][candidate];
+				}
+				int m = 0;
+
+				for (int candidate = 0; candidate < m_L; candidate++) {
+					discreteProbabilities[position_dimension][m] = new BigDecimal(
+							m_node[position_dimension][candidate] / sum_proba).setScale(6, BigDecimal.ROUND_HALF_UP)
+									.toString();
+					m++;
+				}
+
+			}
+
+			writeLogs(discreteProbabilities, NHMCounter);
+		}
+	}
+
 	public void printNHM(double[][] m_node) {
 		System.out.println("");
 		for (int i = 0; i < m_N; i++) {
@@ -407,6 +439,25 @@ public class NHBSA {
 
 	public void setM_pop(int[][] m_pop) {
 		this.m_pop = m_pop;
+	}
+
+	public void writeLogs(String[][] discreteProbabilities, int NHMCounter) {
+		try {
+			FileWriter writer = new FileWriter(new File("matrix" + NHMCounter));
+
+			for (int i = 0; i < m_N; i++) {
+				writer.append("[");
+				for (int j = 0; j < m_L; j++) {
+					writer.append(discreteProbabilities[i][j] + " ");
+				}
+
+				writer.append("]");
+				writer.append("\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

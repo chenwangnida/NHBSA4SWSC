@@ -99,8 +99,6 @@ public class WSCInitializer {
 	public static int NHMIteration = 0 ;
 	public static int NHMCounter = 0;
 	
-	public static int testCounter = 0;
-
 	// time settings
 	public static ArrayList<Long> initTime = new ArrayList<Long>();
 	public static ArrayList<Long> time = new ArrayList<Long>();

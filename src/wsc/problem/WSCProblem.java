@@ -74,8 +74,8 @@ public class WSCProblem {
 			System.out.println("NHM " + iteration);
 
 			// add a local search
-			// LocalSearch ls = new LocalSearch();
-			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
+//			 LocalSearch ls = new LocalSearch();
+//			 ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
