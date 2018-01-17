@@ -26,7 +26,7 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = false; // true for considering the learning rate, false for no
+	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
@@ -44,7 +44,7 @@ public class NHBSA {
 	public NHBSA(int m_N, int m_L) {
 		m_node = new double[m_L][m_L]; // initial a node histogram matrix (NHM)
 		m_node_archive = new double[m_L][m_L]; // initial archive for storing a node histogram matrix (NHM)
-		entropyTemp = new double[m_N]; // initial an entropy array for storing entropy for a matrix
+		entropyTemp = new double[m_L]; // initial an entropy array for storing entropy for a matrix
 		entropy4Gen = new ArrayList<String>(); // initial an entropy array for storing entropy for all matrix through
 												// all
 		// generations
@@ -90,27 +90,6 @@ public class NHBSA {
 			}
 		}
 
-		// // add delta function to all elements of NHM
-		// for (j = 0; j < m_L; j++) {
-		// double delta_sum = 0;
-		// for (int k = 0; k < m_N; k++) {
-		// for (int dimension = 0; dimension < m_L; dimension++) {
-		//
-		// if (m_pop[k][dimension] == j) {
-		// delta_sum += 1;
-		// } else {
-		// delta_sum += 0;
-		// }
-		// }
-		// }
-		//
-		// m_node[i][j] += delta_sum;
-		// }
-
-		// System.out.println("before discounted learning");
-		// printNHM(m_node);
-		// calculateEntropy(m_node);
-
 		// check the discount rate is considered in the learning process
 		if (isDiscount == true) {
 
@@ -122,7 +101,7 @@ public class NHBSA {
 
 			} else {
 				// update m_node using m_node and m_node_archive
-				double[][] m_node_updated = new double[m_N][m_L];
+				double[][] m_node_updated = new double[m_L][m_L];
 
 				switch (method) {
 				case 1: // constant, such as 0.5
@@ -225,10 +204,10 @@ public class NHBSA {
 		int p_counter = 0;
 		ArrayUtils.nullToEmpty(entropyTemp);
 
-		while (p_counter < m_N) { // postion_counter for the random
+		while (p_counter < m_L) { // postion_counter for the random
 									// permutation
 			// initial numsToGenerate from the candidate node list
-			double[] discreteProbabilities = new double[m_N];
+			double[] discreteProbabilities = new double[m_L];
 
 			// calculate probability and put them into proba[]
 			double sum_proba = 0;
@@ -301,7 +280,7 @@ public class NHBSA {
 		// long updateRate = WSCInitializer.NHMCounter /
 		// (long)WSCInitializer.NHMIteration;
 
-		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
+		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
 				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index]
 						* (WSCInitializer.MAX_NUM_ITERATIONS - WSCInitializer.NHMCounter)
