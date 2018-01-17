@@ -105,7 +105,6 @@ public class WSCInitializer {
 	public static ArrayList<Long> initTime = new ArrayList<Long>();
 	public static ArrayList<Long> time = new ArrayList<Long>();
 	public static ArrayList<WSCIndividual> bestFitnessSoFar = new ArrayList<WSCIndividual>();
-	public static ArrayList<WSCIndividual> bestFitnessSoFar4EvalTimes = new ArrayList<WSCIndividual>();
 	public static Long initialisationStartTime;
 	public static Long initialization;
 	public static Long startTime;

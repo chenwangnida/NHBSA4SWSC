@@ -42,8 +42,8 @@ public class NHBSA {
 	public static List<Double> discountRate4Gen;
 
 	public NHBSA(int m_N, int m_L) {
-		m_node = new double[m_N][m_L]; // initial a node histogram matrix (NHM)
-		m_node_archive = new double[m_N][m_L]; // initial archive for storing a node histogram matrix (NHM)
+		m_node = new double[m_L][m_L]; // initial a node histogram matrix (NHM)
+		m_node_archive = new double[m_L][m_L]; // initial archive for storing a node histogram matrix (NHM)
 		entropyTemp = new double[m_N]; // initial an entropy array for storing entropy for a matrix
 		entropy4Gen = new ArrayList<String>(); // initial an entropy array for storing entropy for all matrix through
 												// all
@@ -58,26 +58,54 @@ public class NHBSA {
 	}
 
 	public List<int[]> sampling4NHBSA(int sampleSize, Random random) {
-		int i;// position i
-		int j;// node j
 		List<int[]> sampled_pop = new ArrayList<int[]>();
 
 		setDefaultPara(); // set bias
 
 		// add bias to all elements of NHM
-		for (i = 0; i < m_L; i++) {
-			for (j = 0; j < m_L; j++) {
+		for (int i = 0; i < m_L; i++) {
+			for (int j = 0; j < m_L; j++) {
 				m_node[i][j] = m_bRatio;
 			}
 		}
 
-		// add delta function to all elements of NHM
-		for (i = 0; i < m_N; i++) {
-			for (j = 0; j < m_L; j++) {
-				double delta_sum = delta_sum_calcu(m_N, i, j, m_node);
-				m_node[i][j] += delta_sum;
+		// generate nodes
+		int[] nodes = new int[m_L];
+		for (int m = 0; m < m_L; m++) {
+			nodes[m] = m;
+		}
+
+		for (int j = 0; j < m_L; j++) { // for dimension
+
+			for (int node : nodes) {
+				double delta_sum = 0.00;
+				for (int i = 0; i < m_N; i++) {
+					if (m_pop[i][j] == node) {
+						delta_sum += 1;
+					} else {
+						delta_sum += 0;
+					}
+				}
+				m_node[j][node] += delta_sum;
 			}
 		}
+
+		// // add delta function to all elements of NHM
+		// for (j = 0; j < m_L; j++) {
+		// double delta_sum = 0;
+		// for (int k = 0; k < m_N; k++) {
+		// for (int dimension = 0; dimension < m_L; dimension++) {
+		//
+		// if (m_pop[k][dimension] == j) {
+		// delta_sum += 1;
+		// } else {
+		// delta_sum += 0;
+		// }
+		// }
+		// }
+		//
+		// m_node[i][j] += delta_sum;
+		// }
 
 		// System.out.println("before discounted learning");
 		// printNHM(m_node);
@@ -129,7 +157,7 @@ public class NHBSA {
 		}
 
 		// print NHX Distri
-		printDistribution(m_node, WSCInitializer.NHMCounter);
+//		printDistribution(m_node, WSCInitializer.NHMCounter);
 
 		WSCInitializer.NHMCounter++;
 
@@ -327,16 +355,17 @@ public class NHBSA {
 		return distribution.sample(1);
 	}
 
-	private double delta_sum_calcu(int m_N, int i, int j, double[][] m_node) {
+	private double delta_sum_calcu(int m_N, int j, double[][] m_node) {
 		double delta_sum = 0;
 		for (int k = 0; k < m_N; k++) {
+			for (int dimension = 0; dimension < m_L; dimension++) {
 
-			if (m_pop[k][i] == j) {
-				delta_sum += 1;
-			} else {
-				delta_sum += 0;
+				if (m_pop[k][dimension] == j) {
+					delta_sum += 1;
+				} else {
+					delta_sum += 0;
+				}
 			}
-
 		}
 		return delta_sum;
 	}
@@ -389,9 +418,9 @@ public class NHBSA {
 
 		if (NHMCounter < 4) {
 
-			String[][] discreteProbabilities = new String[m_N][m_L];
+			String[][] discreteProbabilities = new String[m_L][m_L];
 
-			for (int position_dimension = 0; position_dimension < m_N; position_dimension++) {
+			for (int position_dimension = 0; position_dimension < m_L; position_dimension++) {
 				// initial numsToGenerate from the candidate node list
 				// calculate probability and put them into proba[]
 				double sum_proba = 0;
@@ -415,7 +444,7 @@ public class NHBSA {
 
 	public void printNHM(double[][] m_node) {
 		System.out.println("");
-		for (int i = 0; i < m_N; i++) {
+		for (int i = 0; i < m_L; i++) {
 			System.out.print("[");
 			for (int j = 0; j < m_L; j++) {
 				System.out.print(m_node[i][j] + " ");
@@ -446,7 +475,7 @@ public class NHBSA {
 		try {
 			FileWriter writer = new FileWriter(new File("matrix" + NHMCounter));
 
-			for (int i = 0; i < m_N; i++) {
+			for (int i = 0; i < m_L; i++) {
 				writer.append("[");
 				for (int j = 0; j < m_L; j++) {
 					writer.append(discreteProbabilities[i][j] + " ");

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import chart.LineChart;
-import nhbsa.LocalSearch;
+//import nhbsa.LocalSearch;
 import nhbsa.NHBSA;
 import wsc.InitialWSCPool;
 import wsc.data.pool.Service;
@@ -23,6 +23,8 @@ public class WSCProblem {
 			return;
 		}
 
+		WSCInitializer.initialisationStartTime = System.currentTimeMillis();
+
 		WSCInitializer init = new WSCInitializer(args[0], args[1], args[2], args[3], Long.valueOf(args[4]));
 		WSCGraph graGenerator = new WSCGraph();
 		WSCEvaluation eval = new WSCEvaluation();
@@ -35,9 +37,7 @@ public class WSCProblem {
 	// The main entry to NHBSASolver.
 	public void NHBSASolver(WSCGraph graGenerator, WSCEvaluation eval) {
 
-		WSCInitializer.startTime = System.currentTimeMillis();
-		WSCInitializer.initTime.add(System.currentTimeMillis() - WSCInitializer.initialisationStartTime);
-		WSCInitializer.initialization = (long) 0;
+		long initialization = System.currentTimeMillis() - WSCInitializer.initialisationStartTime;
 
 		List<WSCIndividual> population = new ArrayList<WSCIndividual>();
 		// entry to NHBSA
@@ -72,7 +72,8 @@ public class WSCProblem {
 		// entry to learn the matrix and sampling individuals
 		int iteration = 0;
 		while (iteration < WSCInitializer.MAX_NUM_ITERATIONS) {
-			System.out.println("NHM " + iteration);
+			long startTime = System.currentTimeMillis();
+			System.out.println("GENERATION " + iteration);
 
 			// add a local search
 			// LocalSearch ls = new LocalSearch();
@@ -80,6 +81,17 @@ public class WSCProblem {
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
+
+			// update best individual so far
+			if (iteration == 0) {
+				WSCInitializer.bestFitnessSoFar.add(population.get(0));
+			} else {
+				if (WSCInitializer.bestFitnessSoFar.get(iteration - 1).fitness < population.get(0).fitness) {
+					WSCInitializer.bestFitnessSoFar.add(population.get(0));
+				} else {
+					WSCInitializer.bestFitnessSoFar.add(WSCInitializer.bestFitnessSoFar.get(iteration - 1));
+				}
+			}
 
 			// entry to NHBSA
 
@@ -144,62 +156,31 @@ public class WSCProblem {
 				// BestIndiSoFar4EvalStep(population);
 
 			}
+			WSCInitializer.initTime.add(initialization);
+			initialization = (long) 0.0;
+			WSCInitializer.time.add(System.currentTimeMillis() - startTime);
 
 			iteration += 1;
 		}
-		// writeLogs(nhbsa);
+		writeLogs();
 
 	}
-
-	// check the bestIndi found every evalStep
-	// private void BestIndiSoFar4EvalStep(List<WSCIndividual> population) {
-	// if (WSCInitializer.evalCounter % WSCInitializer.evalStep == 0) {
-	// System.out.println("===EVALUATION===NO." + WSCInitializer.evalCounter / 200);
-	//
-	// WSCInitializer.time.add(System.currentTimeMillis() -
-	// WSCInitializer.startTime);
-	// WSCInitializer.initTime.add(WSCInitializer.initialization);
-	// WSCInitializer.startTime = System.currentTimeMillis();
-	//
-	// // sort the individuals according to the fitness
-	// Collections.sort(population);
-	//
-	// if (WSCInitializer.evalCounter == WSCInitializer.evalStep) {
-	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
-	// } else {
-	// if (WSCInitializer.bestFitnessSoFar4EvalTimes.get(
-	// WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).fitness <
-	// population.get(0).fitness) {
-	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(population.get(0));
-	// } else {
-	// WSCInitializer.bestFitnessSoFar4EvalTimes.add(WSCInitializer.bestFitnessSoFar4EvalTimes
-	// .get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1));
-	// }
-	// }
-	//
-	// if (WSCInitializer.evalCounter == WSCInitializer.evalMax) {
-	// writeLogs();
-	// System.exit(0);
-	// }
-	//
-	// }
-	// }
 
 	public void writeLogs() {
 		try {
 			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
-			for (int i = 0; i < WSCInitializer.bestFitnessSoFar4EvalTimes.size(); i++) {
+			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
 				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
-						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar4EvalTimes.get(i).fitness));
+						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
 			}
-			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
-					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
+			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
+					.getStrRepresentation());
 			writer.append("\n");
 
 			// print out the entropy for obeservation
-			for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
-				writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
-			}
+			// for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
+			// writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
+			// }
 			//
 			// LineChart lc = new LineChart();
 			// lc.createLineChart(NHBSA.entropy4Gen, NHBSA.discountRate4Gen);
@@ -214,12 +195,12 @@ public class WSCProblem {
 	public void writeLogs(NHBSA nhbsa) {
 		try {
 			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
-			for (int i = 0; i < WSCInitializer.bestFitnessSoFar4EvalTimes.size(); i++) {
+			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
 				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
-						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar4EvalTimes.get(i).fitness));
+						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
 			}
-			writer.append(WSCInitializer.bestFitnessSoFar4EvalTimes
-					.get(WSCInitializer.bestFitnessSoFar4EvalTimes.size() - 1).getStrRepresentation());
+			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
+					.getStrRepresentation());
 			writer.append("\n");
 
 			// print out the entropy for obeservation
