@@ -9,7 +9,6 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
-import wsc.data.pool.Service;
 import wsc.graph.GraphUtils;
 import wsc.graph.ServiceEdge;
 import wsc.graph.ServiceGraph;
@@ -63,6 +62,28 @@ public class WSCGraph {
 		return graph;
 	}
 
+	public ServiceGraph generateGraphBySerQueue(List<Integer> usedSerQueue) {
+
+		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);
+
+		WSCInitializer.initialWSCPool.createGraphServiceBySerQueue(WSCInitializer.taskInput, WSCInitializer.taskOutput,
+				graph, usedSerQueue);
+
+		while (true) {
+			List<String> dangleVerticeList = dangleVerticeList(graph);
+			if (dangleVerticeList.size() == 0) {
+				break;
+			}
+			removeCurrentdangle(graph, dangleVerticeList);
+		}
+		graph.removeEdge("startNode", "endNode");
+		// System.out.println("original DAG:"+graph.toString());
+		optimiseGraph(graph);
+		// System.out.println("optimised DAG:"+graph.toString());
+
+		return graph;
+	}
+	
 	public ServiceGraph generateGraphBySerQueue() {
 
 		ServiceGraph graph = new ServiceGraph(ServiceEdge.class);

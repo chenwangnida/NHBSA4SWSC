@@ -360,7 +360,39 @@ public class InitialWSCPool {
 
 		serviceCandidates.addAll(serviceSequence);
 		Collections.shuffle(serviceCandidates, WSCInitializer.random);
-		serviceCandidates.forEach(ser -> usedSerQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(ser.getServiceID())));
+		serviceCandidates
+				.forEach(ser -> usedSerQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(ser.getServiceID())));
+
+		boolean goalSatisfied;
+
+		directedGraph.addVertex("startNode");
+
+		do {
+			Service service = swsPool.createGraphService(graphOutputs, serviceCandidates, this.semanticsPool,
+					directedGraph, graphOutputListMap);
+			if (service == null) {
+				System.err.println("No service is usable now");
+				return;
+			}
+			// add found service to a vector based representation
+			// usedSerQueue.add(service);
+
+			goalSatisfied = this.checkOutputSet(directedGraph, taskOutput);
+
+		} while (!goalSatisfied);
+
+	}
+
+	public void createGraphServiceBySerQueue(List<String> taskInput, List<String> taskOutput,
+			DirectedGraph<String, ServiceEdge> directedGraph, List<Integer> usedSerQueue) {
+		graphOutputs.clear();
+		graphOutputListMap.clear();
+		// serviceCandidates.clear();
+
+		taskInput.forEach(input -> graphOutputs.add(new ServiceOutput(input, "startNode", false)));
+
+		serviceCandidates
+				.forEach(ser -> usedSerQueue.add(WSCInitializer.serviceIndexBiMap.inverse().get(ser.getServiceID())));
 
 		boolean goalSatisfied;
 

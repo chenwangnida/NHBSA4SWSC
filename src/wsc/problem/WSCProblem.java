@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import java.util.List;
 
 import chart.LineChart;
+import nhbsa.Mutation;
 //import nhbsa.LocalSearch;
 import nhbsa.NHBSA;
 import wsc.InitialWSCPool;
@@ -79,6 +81,10 @@ public class WSCProblem {
 			// LocalSearch ls = new LocalSearch();
 			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
+			// add a mutation
+//			Mutation mutatation = new Mutation();
+//			mutatation.swapTwo(population, WSCInitializer.random, graGenerator, eval);
+
 			// sort the individuals according to the fitness
 			Collections.sort(population);
 
@@ -129,9 +135,13 @@ public class WSCProblem {
 				InitialWSCPool.setServiceCandidates(serviceCandidates);
 
 				List<Integer> fullSerQueue = new ArrayList<Integer>();
-				List<Integer> usedSerQueue = new ArrayList();
+				for (int id : id_updated) {
+					fullSerQueue.add(id);
+				}
 
-				ServiceGraph update_graph = graGenerator.generateGraph(fullSerQueue);
+				List<Integer> usedSerQueue = new ArrayList<Integer>();
+
+				ServiceGraph update_graph = graGenerator.generateGraphBySerQueue();
 				// adjust the bias according to the valid solution from the service queue
 
 				// create a queue of services according to breathfirstsearch algorithm
