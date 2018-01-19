@@ -35,7 +35,7 @@ public class WSCGraph {
 		}
 		graph.removeEdge("startNode", "endNode");
 		// System.out.println("original DAG:"+graph.toString());
-		optimiseGraph(graph);
+//		optimiseGraph(graph);
 		// System.out.println("optimised DAG:"+graph.toString());
 
 		return graph;
@@ -56,7 +56,7 @@ public class WSCGraph {
 		}
 		graph.removeEdge("startNode", "endNode");
 		// System.out.println("original DAG:"+graph.toString());
-		optimiseGraph(graph);
+//		optimiseGraph(graph);
 		// System.out.println("optimised DAG:"+graph.toString());
 
 		return graph;
@@ -78,7 +78,7 @@ public class WSCGraph {
 		}
 		graph.removeEdge("startNode", "endNode");
 		// System.out.println("original DAG:"+graph.toString());
-		optimiseGraph(graph);
+//		optimiseGraph(graph);
 		// System.out.println("optimised DAG:"+graph.toString());
 
 		return graph;
@@ -100,7 +100,7 @@ public class WSCGraph {
 		}
 		graph.removeEdge("startNode", "endNode");
 		// System.out.println("original DAG:"+graph.toString());
-		optimiseGraph(graph);
+		// optimiseGraph(graph);
 		// System.out.println("optimised DAG:"+graph.toString());
 
 		return graph;
@@ -146,43 +146,43 @@ public class WSCGraph {
 	 * 
 	 * @param serviceGraph
 	 */
-	private void optimiseGraph(ServiceGraph graph) {
-		for (String vertice : graph.vertexSet()) {
-			if (graph.outDegreeOf(vertice) > 1) {
-				List<ServiceEdge> outgoingEdges = new ArrayList<ServiceEdge>();
-
-				outgoingEdges.addAll(graph.outgoingEdgesOf(vertice));
-
-				for (ServiceEdge outgoingedge : outgoingEdges) {
-					if (graph.getEdgeTarget(outgoingedge).equals("endNode")) {
-						// Remove the output node from the children list
-						outgoingEdges.remove(outgoingedge);
-						break;
-					}
-
-				}
-
-				if (outgoingEdges.size() > 1) {
-					// save the direct successors
-					Set<String> directSuccesors = new HashSet<String>();
-					Set<String> allTargets = new HashSet<String>();
-
-					outgoingEdges.forEach(outgoingedge -> directSuccesors.add(graph.getEdgeTarget(outgoingedge)));
-
-					for (String succesor : directSuccesors) {
-						Set<String> targets = GraphUtils.getOutgoingVertices(graph, succesor);
-						allTargets.addAll(targets);
-					}
-
-					for (String succesor : directSuccesors) {
-						if (allTargets.contains(succesor)) {
-							graph.removeEdge(vertice, succesor);
-						}
-					}
-				}
-			}
-		}
-	}
+//	private void optimiseGraph(ServiceGraph graph) {
+//		for (String vertice : graph.vertexSet()) {
+//			if (graph.outDegreeOf(vertice) > 1) {
+//				List<ServiceEdge> outgoingEdges = new ArrayList<ServiceEdge>();
+//
+//				outgoingEdges.addAll(graph.outgoingEdgesOf(vertice));
+//
+//				for (ServiceEdge outgoingedge : outgoingEdges) {
+//					if (graph.getEdgeTarget(outgoingedge).equals("endNode")) {
+//						// Remove the output node from the children list
+//						outgoingEdges.remove(outgoingedge);
+//						break;
+//					}
+//
+//				}
+//
+//				if (outgoingEdges.size() > 1) {
+//					// save the direct successors
+//					Set<String> directSuccesors = new HashSet<String>();
+//					Set<String> allTargets = new HashSet<String>();
+//
+//					outgoingEdges.forEach(outgoingedge -> directSuccesors.add(graph.getEdgeTarget(outgoingedge)));
+//
+//					for (String succesor : directSuccesors) {
+//						Set<String> targets = GraphUtils.getOutgoingVertices(graph, succesor);
+//						allTargets.addAll(targets);
+//					}
+//
+//					for (String succesor : directSuccesors) {
+//						if (allTargets.contains(succesor)) {
+//							graph.removeEdge(vertice, succesor);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 	/**
 	 * return all the elements of atomic services in the graph-based representation 
 	 * 
