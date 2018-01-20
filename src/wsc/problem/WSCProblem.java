@@ -82,8 +82,9 @@ public class WSCProblem {
 			// ls.swap(population, WSCInitializer.random, graGenerator, eval);
 
 			// add a mutation
-//			Mutation mutatation = new Mutation();
-			//			mutatation.swapTwo(population, WSCInitializer.random, graGenerator, eval);
+			// Mutation mutatation = new Mutation();
+			// mutatation.swapOne(population, WSCInitializer.random, graGenerator, eval);
+			// mutatation.swapTwo(population, WSCInitializer.random, graGenerator, eval);
 
 			// sort the individuals according to the fitness
 			Collections.sort(population);
