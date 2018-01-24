@@ -26,7 +26,7 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = true; // true for considering the learning rate, false for no
+	boolean isDiscount = false; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
