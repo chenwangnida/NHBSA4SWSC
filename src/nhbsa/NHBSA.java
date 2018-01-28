@@ -29,7 +29,7 @@ public class NHBSA {
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 2; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
-					// 2, 5 = moving average
+					// 2, 5 = moving average,  6 = moving average for a particular range
 	double lrate = 0.5; // default = 0.5
 	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
 	double k = 1.0;
@@ -121,6 +121,10 @@ public class NHBSA {
 					break;
 				case 5: // moving average
 					m_node_updated = adaptive_discountedNHM4MovingAverage(m_node_archive, m_node, m_node_updated);
+					break;
+				case 6: // moving average
+					m_node_updated = adaptive_discountedNHM4MovingAverage4Range(m_node_archive, m_node, m_node_updated,
+							0.1, 0.4);
 					break;
 				}
 
@@ -259,7 +263,7 @@ public class NHBSA {
 			double[][] m_node_updated) {
 		String[] s = entropy4Gen.get(entropy4Gen.size() - 1).split("\\s+");
 		double lrate_update = updateLRate(Double.parseDouble(s[0]), functions);
-		System.out.println("updated alpha:"+lrate_update);
+		System.out.println("updated alpha:" + lrate_update);
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
@@ -293,6 +297,27 @@ public class NHBSA {
 		return m_node_updated;
 	}
 
+	private double[][] adaptive_discountedNHM4MovingAverage4Range(double[][] m_node_archive, double[][] m_node,
+			double[][] m_node_updated, double lowerbound, double upperbound) {
+
+		// long updateRate = WSCInitializer.NHMCounter /
+		// (long)WSCInitializer.NHMIteration;
+
+		double alpha = lowerbound
+				+ (WSCInitializer.NHMCounter - 1) * (upperbound - lowerbound) / (WSCInitializer.MAX_NUM_ITERATIONS - 2);
+
+		System.out.println(alpha);
+
+		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
+			for (int index = 0; index < m_L; index++) {
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * alpha
+						+ m_node[indi_pos][index] * (1 - alpha);
+			}
+		}
+
+		return m_node_updated;
+	}
+
 	private double[][] discountedNHM(double[][] m_node_archive, double[][] m_node, double lrate,
 			double[][] m_node_updated) {
 
@@ -313,12 +338,12 @@ public class NHBSA {
 
 		switch (function) {
 		case 1: // linear
-			updatedRate = 1 - meanEntropy * 1 / (k * maxEntropy);
+			updatedRate = 1.0 - meanEntropy * 1 / (maxEntropy) + 0.1;
 			break;
 		case 2: // square of linear
 			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 - meanEntropy * 1 / maxEntropy);
 			break;
-		case 4:
+		case 3:
 			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 + meanEntropy * 1 / maxEntropy);
 			break;
 		}
