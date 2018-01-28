@@ -28,11 +28,11 @@ public class NHBSA {
 	// settings for discount learning
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 5; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
+	int method = 2; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
 					// 2, 5 = moving average
 	double lrate = 0.5; // default = 0.5
 	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
-	double k = 2.5;
+	double k = 1.0;
 	double[][] m_node_archive;
 
 	// a array for storing entropy
@@ -108,16 +108,16 @@ public class NHBSA {
 					m_node_updated = discountedNHM(m_node_archive, m_node, lrate, m_node_updated);
 					break;
 				case 2: // linear
-					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 1, m_node_updated);
 					calculateEntropy(m_node);
+					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 1, m_node_updated);
 					break;
 				case 3:// square
-					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 2, m_node_updated);
 					calculateEntropy(m_node);
+					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 2, m_node_updated);
 					break;
 				case 4:
-					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 3, m_node_updated);
 					calculateEntropy(m_node);
+					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 3, m_node_updated);
 					break;
 				case 5: // moving average
 					m_node_updated = adaptive_discountedNHM4MovingAverage(m_node_archive, m_node, m_node_updated);
@@ -221,13 +221,14 @@ public class NHBSA {
 
 			entropyTemp[p_counter] = entropy(discreteProbabilities);
 
-			if (p_counter == 0) {
-				maxEntropy = entropyTemp[0];
-				// System.out.println("Max Entropy:" + maxEntropy);
-			}
-
 			p_counter++;
 		}
+
+		if (maxEntropy < Arrays.stream(entropyTemp).average().getAsDouble())
+			maxEntropy = Arrays.stream(entropyTemp).average().getAsDouble();
+		// This might not be correct
+
+		System.out.println("MAX_MEAN_ENTROPY" + maxEntropy);
 
 		// System.out.print("Mean Entropy:" + Arrays.stream(entropyTemp).average());
 		// System.out.print("Best Entropy:" + Arrays.stream(entropyTemp).max());
@@ -258,9 +259,9 @@ public class NHBSA {
 			double[][] m_node_updated) {
 		String[] s = entropy4Gen.get(entropy4Gen.size() - 1).split("\\s+");
 		double lrate_update = updateLRate(Double.parseDouble(s[0]), functions);
-		System.out.println(lrate_update);
+		System.out.println("updated alpha:"+lrate_update);
 
-		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
+		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
 				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * lrate_update
 						+ m_node[indi_pos][index] * (1 - lrate_update);
@@ -295,7 +296,7 @@ public class NHBSA {
 	private double[][] discountedNHM(double[][] m_node_archive, double[][] m_node, double lrate,
 			double[][] m_node_updated) {
 
-		for (int indi_pos = 0; indi_pos < m_N; indi_pos++) {
+		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
 				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * lrate
 						+ m_node[indi_pos][index] * (1 - lrate);
@@ -313,10 +314,13 @@ public class NHBSA {
 		switch (function) {
 		case 1: // linear
 			updatedRate = 1 - meanEntropy * 1 / (k * maxEntropy);
+			break;
 		case 2: // square of linear
 			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 - meanEntropy * 1 / maxEntropy);
+			break;
 		case 4:
 			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 + meanEntropy * 1 / maxEntropy);
+			break;
 		}
 		return updatedRate;
 	}

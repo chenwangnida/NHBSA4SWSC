@@ -46,8 +46,7 @@ public class WSCInitializer {
 	// local search settings
 	public static int noOfls = 0;
 	public static double Pls = 0.01; // probability of local search
-	public static double Pm = 0.2; // probability of local search
-
+	public static double Pm = 0.1; // probability of local search
 
 	// Constants with of order of QoS attributes
 	public static final int TIME = 0;
@@ -142,7 +141,7 @@ public class WSCInitializer {
 		}
 
 		dimension_size = WSCInitializer.initialWSCPool.getServiceSequence().size();
-//		population_size = dimension_size * 2;
+		// population_size = dimension_size * 2;
 
 		// NHMIteration = (int) Math.floor(evalMax / population_size);
 
