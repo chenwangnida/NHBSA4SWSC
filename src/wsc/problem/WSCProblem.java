@@ -203,30 +203,30 @@ public class WSCProblem {
 		}
 	}
 
-	public void writeLogs(NHBSA nhbsa) {
-		try {
-			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
-			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
-				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
-						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
-			}
-			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
-					.getStrRepresentation());
-			writer.append("\n");
-
-			// print out the entropy for obeservation
-			for (int i = 0; i < nhbsa.getEntropy4Gen().size(); i++) {
-				writer.append(String.format("%d %s\n", i, nhbsa.getEntropy4Gen().get(i)));
-			}
-
-			LineChart lc = new LineChart();
-			lc.createLineChart(nhbsa.getEntropy4Gen(), nhbsa.getDiscountRate4Gen());
-
-			writer.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void writeLogs(NHBSA nhbsa) {
+//		try {
+//			FileWriter writer = new FileWriter(new File(WSCInitializer.logName));
+//			for (int i = 0; i < WSCInitializer.bestFitnessSoFar.size(); i++) {
+//				writer.append(String.format("%d %d %d %f\n", i, WSCInitializer.initTime.get(i),
+//						WSCInitializer.time.get(i), WSCInitializer.bestFitnessSoFar.get(i).fitness));
+//			}
+//			writer.append(WSCInitializer.bestFitnessSoFar.get(WSCInitializer.bestFitnessSoFar.size() - 1)
+//					.getStrRepresentation());
+//			writer.append("\n");
+//
+//			// print out the entropy for obeservation
+//			for (int i = 0; i < nhbsa.getEntropy4Gen().size(); i++) {
+//				writer.append(String.format("%d %s\n", i, nhbsa.getEntropy4Gen().get(i)));
+//			}
+//
+//			LineChart lc = new LineChart();
+//			lc.createLineChart(nhbsa.getEntropy4Gen(), nhbsa.getDiscountRate4Gen());
+//
+//			writer.close();
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 }

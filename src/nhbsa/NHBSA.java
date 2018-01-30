@@ -28,8 +28,9 @@ public class NHBSA {
 	// settings for discount learning
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 2; // 1 = constant alpha, 2 = linear, 3= square of linear, 4 = unfold function of
-					// 2, 5 = moving average,  6 = moving average for a particular range
+	int method = 3; // 1 = constant alpha, 2 = E-EDA, 3= E-EDA dynamic minEntropy, 4 = unfold
+					// function of
+					// 2, 5 = moving average, 6 = L-EDA for a range
 	double lrate = 0.5; // default = 0.5
 	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
 	double k = 1.0;
@@ -37,15 +38,21 @@ public class NHBSA {
 
 	// a array for storing entropy
 	private static double maxEntropy = 0;
+	private static double minEntropy = 0;
+
 	private double[] entropyTemp;
-	public static List<String> entropy4Gen;
+	public static List<Double> entropy4Gen;
 	public static List<Double> discountRate4Gen;
+
+	// range
+	private static double lowerbound = 0.1;
+	private static double upperbound = 0.9;
 
 	public NHBSA(int m_N, int m_L) {
 		m_node = new double[m_L][m_L]; // initial a node histogram matrix (NHM)
 		m_node_archive = new double[m_L][m_L]; // initial archive for storing a node histogram matrix (NHM)
 		entropyTemp = new double[m_L]; // initial an entropy array for storing entropy for a matrix
-		entropy4Gen = new ArrayList<String>(); // initial an entropy array for storing entropy for all matrix through
+		entropy4Gen = new ArrayList<Double>(); // initial an entropy array for storing entropy for all matrix through
 												// all
 		// generations
 		discountRate4Gen = new ArrayList<Double>(); // initial an discountRate arraylist for storing the changing
@@ -107,11 +114,11 @@ public class NHBSA {
 				case 1: // constant, such as 0.5
 					m_node_updated = discountedNHM(m_node_archive, m_node, lrate, m_node_updated);
 					break;
-				case 2: // linear
+				case 2: // linear for a given bound
 					calculateEntropy(m_node);
 					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 1, m_node_updated);
 					break;
-				case 3:// square
+				case 3:// liearn for a given bound with histogrical minEntropy
 					calculateEntropy(m_node);
 					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 2, m_node_updated);
 					break;
@@ -122,9 +129,9 @@ public class NHBSA {
 				case 5: // moving average
 					m_node_updated = adaptive_discountedNHM4MovingAverage(m_node_archive, m_node, m_node_updated);
 					break;
-				case 6: // moving average
+				case 6: // moving average for a given bound
 					m_node_updated = adaptive_discountedNHM4MovingAverage4Range(m_node_archive, m_node, m_node_updated,
-							0.1, 0.4);
+							lowerbound, upperbound);
 					break;
 				}
 
@@ -230,17 +237,17 @@ public class NHBSA {
 
 		if (maxEntropy < Arrays.stream(entropyTemp).average().getAsDouble())
 			maxEntropy = Arrays.stream(entropyTemp).average().getAsDouble();
-		// This might not be correct
 
-		System.out.println("MAX_MEAN_ENTROPY" + maxEntropy);
+		if (minEntropy == 0) {
+			minEntropy = Arrays.stream(entropyTemp).min().getAsDouble();
 
-		// System.out.print("Mean Entropy:" + Arrays.stream(entropyTemp).average());
-		// System.out.print("Best Entropy:" + Arrays.stream(entropyTemp).max());
-		// System.out.println("Worst Entropy:" + Arrays.stream(entropyTemp).min());
+		} else if (minEntropy > Arrays.stream(entropyTemp).min().getAsDouble()) {
+			minEntropy = Arrays.stream(entropyTemp).min().getAsDouble();
+		}
 
-		entropy4Gen.add(Arrays.stream(entropyTemp).average().getAsDouble() + " "
-				+ Arrays.stream(entropyTemp).max().getAsDouble() + " "
-				+ Arrays.stream(entropyTemp).min().getAsDouble());
+		entropy4Gen.add(Arrays.stream(entropyTemp).average().getAsDouble());
+		System.out.println("MAX_MEAN_ENTROPY" + maxEntropy + ";Min_MEAN_ENTROPY" + minEntropy);
+
 	}
 
 	private double entropy(double[] discreteProbabilities) {
@@ -261,14 +268,14 @@ public class NHBSA {
 	// adaptive method according to the entorpy value
 	private double[][] adaptive_discountedNHM(double[][] m_node_archive, double[][] m_node, int functions,
 			double[][] m_node_updated) {
-		String[] s = entropy4Gen.get(entropy4Gen.size() - 1).split("\\s+");
-		double lrate_update = updateLRate(Double.parseDouble(s[0]), functions);
-		System.out.println("updated alpha:" + lrate_update);
+		double s = entropy4Gen.get(entropy4Gen.size() - 1);
+		double lrate_update = updateLRate(s, functions);
+		System.out.println("updated alpha:" + (lrate_update));
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
-				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * lrate_update
-						+ m_node[indi_pos][index] * (1 - lrate_update);
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * (1 - lrate_update)
+						+ m_node[indi_pos][index] * lrate_update;
 			}
 		}
 
@@ -303,15 +310,15 @@ public class NHBSA {
 		// long updateRate = WSCInitializer.NHMCounter /
 		// (long)WSCInitializer.NHMIteration;
 
-		double alpha = lowerbound
-				+ (WSCInitializer.NHMCounter - 1) * (upperbound - lowerbound) / (WSCInitializer.MAX_NUM_ITERATIONS - 2);
+		double alpha = (WSCInitializer.MAX_NUM_ITERATIONS - 1 - WSCInitializer.NHMCounter) * (upperbound - lowerbound)
+				/ (WSCInitializer.MAX_NUM_ITERATIONS - 1) + lowerbound;
 
-		System.out.println(alpha);
+		System.out.println(WSCInitializer.NHMCounter + ";" + (alpha));
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
-				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * alpha
-						+ m_node[indi_pos][index] * (1 - alpha);
+				m_node_updated[indi_pos][index] = m_node_archive[indi_pos][index] * (1 - alpha)
+						+ m_node[indi_pos][index] * alpha;
 			}
 		}
 
@@ -338,10 +345,16 @@ public class NHBSA {
 
 		switch (function) {
 		case 1: // linear
-			updatedRate = 1.0 - meanEntropy * 1 / (maxEntropy) + 0.1;
+			// updatedRate = 1.0 - meanEntropy * 1 / (maxEntropy) + 0.1;
+			updatedRate = meanEntropy * (upperbound - lowerbound) / (maxEntropy) + lowerbound;
+
 			break;
-		case 2: // square of linear
-			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 - meanEntropy * 1 / maxEntropy);
+		case 2: // linear with considering the historical minimum
+			updatedRate = (meanEntropy - minEntropy) * (upperbound - lowerbound) / (maxEntropy - minEntropy)
+					+ lowerbound;
+
+			// updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 - meanEntropy * 1 /
+			// maxEntropy);
 			break;
 		case 3:
 			updatedRate = (1 - meanEntropy * 1 / maxEntropy) * (1 + meanEntropy * 1 / maxEntropy);
@@ -392,14 +405,6 @@ public class NHBSA {
 
 	public void setM_L(int m_L) {
 		this.m_L = m_L;
-	}
-
-	public List<String> getEntropy4Gen() {
-		return entropy4Gen;
-	}
-
-	public void setEntropy4Gen(List<String> entropy4Gen) {
-		this.entropy4Gen = entropy4Gen;
 	}
 
 	public List<Double> getDiscountRate4Gen() {
