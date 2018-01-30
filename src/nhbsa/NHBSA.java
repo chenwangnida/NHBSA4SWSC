@@ -26,9 +26,9 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = true; // true for considering the learning rate, false for no
+	boolean isDiscount = false; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 3; // 1 = constant alpha, 2 = E-EDA, 3= E-EDA dynamic minEntropy, 4 = unfold
+	int method = 6; // 1 = constant alpha, 2 = E-EDA, 3= E-EDA dynamic minEntropy, 4 = unfold
 					// function of
 					// 2, 5 = moving average, 6 = L-EDA for a range
 	double lrate = 0.5; // default = 0.5
@@ -45,7 +45,7 @@ public class NHBSA {
 	public static List<Double> discountRate4Gen;
 
 	// range
-	private static double lowerbound = 0.1;
+	private static double lowerbound = 0.2;
 	private static double upperbound = 0.9;
 
 	public NHBSA(int m_N, int m_L) {
