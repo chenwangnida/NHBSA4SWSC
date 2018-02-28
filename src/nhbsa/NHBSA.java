@@ -26,7 +26,7 @@ public class NHBSA {
 	double Pls = 0.1; // probability of local search
 
 	// settings for discount learning
-	boolean isDiscount = false; // true for considering the learning rate, false for no
+	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 6; // 1 = constant alpha, 2 = E-EDA, 3= E-EDA dynamic minEntropy, 4 = unfold
 					// function of
@@ -314,6 +314,7 @@ public class NHBSA {
 				/ (WSCInitializer.MAX_NUM_ITERATIONS - 1) + lowerbound;
 
 		System.out.println(WSCInitializer.NHMCounter + ";" + (alpha));
+		discountRate4Gen.add(alpha);
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {

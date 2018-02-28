@@ -189,9 +189,9 @@ public class WSCProblem {
 			writer.append("\n");
 
 			// print out the entropy for obeservation
-			// for (int i = 0; i < NHBSA.entropy4Gen.size(); i++) {
-			// writer.append(String.format("%d %s\n", i, NHBSA.entropy4Gen.get(i)));
-			// }
+			for (int i = 0; i < NHBSA.discountRate4Gen.size(); i++) {
+				writer.append(String.format("%s\n", NHBSA.discountRate4Gen.get(i)));
+			}
 			//
 			// LineChart lc = new LineChart();
 			// lc.createLineChart(NHBSA.entropy4Gen, NHBSA.discountRate4Gen);
