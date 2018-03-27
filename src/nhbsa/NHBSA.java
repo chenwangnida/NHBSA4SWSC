@@ -18,6 +18,16 @@ import com.google.common.math.DoubleMath;
 import wsc.problem.WSCInitializer;
 
 public class NHBSA {
+	// settings for discount learning
+	boolean isDiscount = true; // true for considering the learning rate, false for no
+	boolean isFirstNHM = true; // true for the first NHM without any discount
+	int method = 3; // 3= E-EDA dynamic minEntropy with a range , 6 = L-EDA with a range
+	double lrate = 1.0; // default = 0.5
+	// range
+	private static double lowerbound = 0.0;
+	private static double upperbound = 1.0;
+	
+	//the followings need no changes
 	private int m_N; // population size
 	private int m_L; // length of permutation
 	int[][] m_pop = new int[m_N][m_L];// a population matrix
@@ -25,28 +35,16 @@ public class NHBSA {
 	private double m_bRatio;// a bias for NHM
 	double Pls = 0.1; // probability of local search
 
-	// settings for discount learning
-	boolean isDiscount = true; // true for considering the learning rate, false for no
-	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 6; // 1 = constant alpha, 2 = E-EDA, 3= E-EDA dynamic minEntropy, 4 = unfold
-					// function of
-					// 2, 5 = moving average, 6 = L-EDA for a range
-	double lrate = 0.5; // default = 0.5
-	boolean isAdaptive = false;// false for default, no adaptive changes according to the entropy of the matrix
 	double k = 1.0;
 	double[][] m_node_archive;
 
 	// a array for storing entropy
-	private static double maxEntropy = 0;
-	private static double minEntropy = 0;
+	private static double maxEntropy = 0.2;
+	private static double minEntropy = 0.9;
 
 	private double[] entropyTemp;
 	public static List<Double> entropy4Gen;
 	public static List<Double> discountRate4Gen;
-
-	// range
-	private static double lowerbound = 0.2;
-	private static double upperbound = 0.9;
 
 	public NHBSA(int m_N, int m_L) {
 		m_node = new double[m_L][m_L]; // initial a node histogram matrix (NHM)
@@ -118,7 +116,7 @@ public class NHBSA {
 					calculateEntropy(m_node);
 					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 1, m_node_updated);
 					break;
-				case 3:// liearn for a given bound with histogrical minEntropy
+				case 3:// linear for a given bound with histogrical minEntropy
 					calculateEntropy(m_node);
 					m_node_updated = adaptive_discountedNHM(m_node_archive, m_node, 2, m_node_updated);
 					break;
