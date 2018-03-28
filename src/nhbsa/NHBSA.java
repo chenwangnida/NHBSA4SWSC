@@ -21,11 +21,11 @@ public class NHBSA {
 	// settings for discount learning
 	boolean isDiscount = true; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
-	int method = 3; // 3= E-EDA dynamic minEntropy with a range , 6 = L-EDA with a range
+	int method = 6; // 3= E-EDA dynamic minEntropy with a range , 6 = L-EDA with a range
 	double lrate = 1.0; // default = 0.5
 	// range
-	private static double lowerbound = 0.0;
-	private static double upperbound = 1.0;
+	private static double lowerbound = 0.2;
+	private static double upperbound = 0.9;
 	
 	//the followings need no changes
 	private int m_N; // population size
@@ -244,7 +244,7 @@ public class NHBSA {
 		}
 
 		entropy4Gen.add(Arrays.stream(entropyTemp).average().getAsDouble());
-		System.out.println("MAX_MEAN_ENTROPY" + maxEntropy + ";Min_MEAN_ENTROPY" + minEntropy);
+//		System.out.println("MAX_MEAN_ENTROPY" + maxEntropy + ";Min_MEAN_ENTROPY" + minEntropy);
 
 	}
 
@@ -268,7 +268,7 @@ public class NHBSA {
 			double[][] m_node_updated) {
 		double s = entropy4Gen.get(entropy4Gen.size() - 1);
 		double lrate_update = updateLRate(s, functions);
-		System.out.println("updated alpha:" + (lrate_update));
+//		System.out.println("updated alpha:" + (lrate_update));
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
 			for (int index = 0; index < m_L; index++) {
@@ -311,7 +311,7 @@ public class NHBSA {
 		double alpha = (WSCInitializer.MAX_NUM_ITERATIONS - 1 - WSCInitializer.NHMCounter) * (upperbound - lowerbound)
 				/ (WSCInitializer.MAX_NUM_ITERATIONS - 1) + lowerbound;
 
-		System.out.println(WSCInitializer.NHMCounter + ";" + (alpha));
+//		System.out.println(WSCInitializer.NHMCounter + ";" + (alpha));
 		discountRate4Gen.add(alpha);
 
 		for (int indi_pos = 0; indi_pos < m_L; indi_pos++) {
