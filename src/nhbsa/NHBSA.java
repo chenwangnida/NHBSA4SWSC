@@ -24,8 +24,8 @@ public class NHBSA {
 	int method = 6; // 3= E-EDA dynamic minEntropy with a range , 6 = L-EDA with a range
 	double lrate = 1.0; // default = 0.5
 	// range
-	private static double lowerbound = 0.2;
-	private static double upperbound = 0.9;
+	private static double lowerbound = 0.0;
+	private static double upperbound = 1.0;
 	
 	//the followings need no changes
 	private int m_N; // population size
