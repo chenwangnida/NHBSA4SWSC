@@ -32,8 +32,12 @@ public class Service implements Comparable<Service> {
 	private static List<ParamterConn> pConnList0 = new ArrayList<ParamterConn>();
 	private static List<ServiceInput> inputList0 = new ArrayList<ServiceInput>();
 	private static Set<String> sourceSerIdSet = new HashSet<String>();
+	private int layer;
+
 
 	private double score;
+	
+	
 
 	public Service(String serviceID, double[] qos, List<ServiceInput> inputList, List<ServiceOutput> arrayList) {
 		super();
@@ -83,6 +87,14 @@ public class Service implements Comparable<Service> {
 		this.serviceID = serviceID;
 	}
 
+
+	public int getLayer() {
+		return layer;
+	}
+
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
 
 	@Override
 	public int compareTo(Service o) {

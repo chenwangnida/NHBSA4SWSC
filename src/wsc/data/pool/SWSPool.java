@@ -143,6 +143,38 @@ public class SWSPool {
 		}
 		return swsp;
 	}
+	
+	/**
+	 * find a single service that can be applied now and update the output list and
+	 * delete the service
+	 *
+	 * @param inputSet
+	 */
+	public List<Service> findPossibleService4Layers(HashSet<String> inputSet) {
+
+		List<Service> services4Layer = new ArrayList<Service>();
+
+		for (int i = 0; i < this.serviceList.size(); i++) {
+			Service service = this.serviceList.get(i);
+
+			if (service.searchServiceMatchFromInputSet(this.semantics, inputSet)) {
+				services4Layer.add(service);
+			}
+		}
+
+		this.serviceList.removeAll(services4Layer);
+
+		for (Service service : services4Layer) {
+			for (ServiceOutput output : service.getOutputList()) {
+
+				if (!inputSet.contains(output.getOutput())) {
+					inputSet.add(output.getOutput());
+				}
+			}
+		}
+
+		return services4Layer;
+	}
 
 	/**
 	 * find a single service that can be applied now and update the output list

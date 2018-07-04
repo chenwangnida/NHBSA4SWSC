@@ -19,7 +19,7 @@ import wsc.problem.WSCInitializer;
 
 public class NHBSA {
 	// settings for discount learning
-	boolean isDiscount = true; // true for considering the learning rate, false for no
+	boolean isDiscount = false; // true for considering the learning rate, false for no
 	boolean isFirstNHM = true; // true for the first NHM without any discount
 	int method = 6; // 3= E-EDA dynamic minEntropy with a range , 6 = L-EDA with a range
 	double lrate = 1.0; // default = 0.5

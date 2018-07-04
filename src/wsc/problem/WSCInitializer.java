@@ -41,7 +41,7 @@ public class WSCInitializer {
 	public static Random random;
 	public static final int population_size = 100;
 	public static int dimension_size;
-	public static final int MAX_NUM_ITERATIONS = 100;
+	public static final int MAX_NUM_ITERATIONS = 200;
 
 	// local search settings
 	public static int noOfls = 0;
@@ -134,7 +134,7 @@ public class WSCInitializer {
 			ontologyDAG = createOntologyDAG(initialWSCPool);
 
 			// Filter web services in repository
-			initialWSCPool.allRelevantService(taskInput, taskOutput);
+			initialWSCPool.allRelevantService4Layers(taskInput, taskOutput);
 
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
